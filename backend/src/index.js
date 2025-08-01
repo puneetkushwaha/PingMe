@@ -20,20 +20,18 @@ const PORT = process.env.PORT || 5001;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Allowed origins for CORS (local + production frontend)
+// Allowed origins for CORS
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://pingme-1-832l.onrender.com", // ✅ Replace with your frontend render domain
+  "https://pingme-1-832l.onrender.com", // ✅ Your frontend deployed domain
 ];
 
-// Middleware
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -44,11 +42,11 @@ app.use(
   })
 );
 
-// API Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-// ✅ Serve frontend in production
+// Production: Serve frontend
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
@@ -57,7 +55,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Connect to DB and start server
+// Connect DB and start server
 connectDB()
   .then(() => {
     server.listen(PORT, () => {
