@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
@@ -12,21 +13,27 @@ import { app, server } from "./lib/socket.js";
 // Load environment variables
 dotenv.config();
 
+// Port
 const PORT = process.env.PORT || 5001;
-const __dirname = path.resolve();
 
-// ✅ Allow both localhost and Render frontend
+// __dirname fix for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Allowed origins for CORS (local + production frontend)
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://pingme-1-832l.onrender.com", // ✅ Replace with your actual frontend render URL
+  "https://pingme-1-832l.onrender.com", // ✅ Replace with your frontend render domain
 ];
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -41,7 +48,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Serve frontend in production
+// ✅ Serve frontend in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
@@ -50,11 +57,11 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Connect DB and start server
+// Connect to DB and start server
 connectDB()
   .then(() => {
     server.listen(PORT, () => {
-      console.log("✅ Server running on PORT:", PORT);
+      console.log(`✅ Server running on PORT: ${PORT}`);
     });
   })
   .catch((err) => {
