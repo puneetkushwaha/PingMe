@@ -15,17 +15,29 @@ dotenv.config();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
+// ✅ Allow both localhost and Render frontend
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://pingme-1-832l.onrender.com", // ✅ Replace with your actual frontend render URL
+];
+
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 
-// Routes
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
@@ -38,12 +50,14 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// First connect DB, then start server
-connectDB().then(() => {
-  server.listen(PORT, () => {
-    console.log("✅ Server running on PORT:", PORT);
+// Connect DB and start server
+connectDB()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log("✅ Server running on PORT:", PORT);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ DB connection failed:", err);
+    process.exit(1);
   });
-}).catch((err) => {
-  console.error("❌ DB connection failed:", err);
-  process.exit(1);
-});
