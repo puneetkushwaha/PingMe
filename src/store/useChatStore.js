@@ -122,7 +122,28 @@ export const useChatStore = create((set, get) => ({
     try {
       const endpoint = selectedUser.isGroup ? `/groups/send/${selectedUser._id}` : `/messages/send/${selectedUser._id}`;
       const res = await axiosInstance.post(endpoint, messageData);
-      set({ messages: [...messages, res.data] });
+      const newMessage = res.data;
+
+      set({ messages: [...messages, newMessage] });
+
+      // ✅ UPDATE SIDEBAR: Move this user to top with new last message
+      set((state) => {
+        const updatedUsers = [...state.users];
+        const userIndex = updatedUsers.findIndex(u => u._id === selectedUser._id);
+
+        if (userIndex !== -1) {
+          const userToMove = { ...updatedUsers[userIndex] };
+          userToMove.lastMessage = newMessage.text || (newMessage.image ? "📷 Image" : newMessage.audio ? "🎤 Audio" : "📁 File");
+          userToMove.lastMessageTime = new Date().toISOString();
+
+          updatedUsers.splice(userIndex, 1);
+          updatedUsers.unshift(userToMove);
+
+          return { users: updatedUsers };
+        }
+        return state;
+      });
+
     } catch (error) {
       toast.error(error.response?.data?.message || "Error sending message");
     }
@@ -195,6 +216,30 @@ export const useChatStore = create((set, get) => ({
         }
         toast.success(`New message from ${isGroupMessage ? "Group" : newMessage.senderId}`);
       }
+
+      // ✅ UPDATE SIDEBAR: Update lastMessage and move user to top
+      set((state) => {
+        const otherUserId = isGroupMessage ? newMessage.groupId : (newMessage.senderId === useAuthStore.getState().authUser._id ? newMessage.receiverId : newMessage.senderId);
+
+        // Find the user/group in the list
+        const userIndex = state.users.findIndex(u => u._id === otherUserId);
+
+        if (userIndex !== -1) {
+          const updatedUsers = [...state.users];
+          const userToMove = { ...updatedUsers[userIndex] };
+
+          // Update last message text
+          userToMove.lastMessage = newMessage.text || (newMessage.image ? "📷 Image" : newMessage.audio ? "🎤 Audio" : "📁 File");
+          userToMove.lastMessageTime = new Date().toISOString();
+
+          // Remove from current position and add to top
+          updatedUsers.splice(userIndex, 1);
+          updatedUsers.unshift(userToMove);
+
+          return { users: updatedUsers };
+        }
+        return state;
+      });
     });
 
     socket.on("messagesSeen", ({ receiverId }) => {

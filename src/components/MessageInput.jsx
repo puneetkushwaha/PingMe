@@ -241,7 +241,7 @@ const MessageInput = () => {
         <div className="flex items-center gap-2 max-w-full mx-auto">
           <button
             type="button"
-            className={`p-2 hover:bg-white/5 rounded-full transition-all ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+            className={`p-2 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             <Smile className="size-6" />
@@ -251,7 +251,7 @@ const MessageInput = () => {
             <button
               type="button"
               onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
-              className={`p-2 hover:bg-white/5 rounded-full transition-all ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+              className={`p-2 hover:bg-white/5 rounded-full transition-all shrink-0 ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             >
               <Plus className={`size-7 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
             </button>
@@ -274,11 +274,11 @@ const MessageInput = () => {
             )}
           </div>
 
-          <form onSubmit={handleSendMessage} className="flex-1 flex gap-2 items-center">
+          <form onSubmit={handleSendMessage} className="flex-1 flex gap-2 items-center min-w-0">
             <input
               type="text"
               placeholder="Type a message"
-              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-4 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)]"
+              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-4 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
               value={text}
               onChange={handleTextChange}
             />

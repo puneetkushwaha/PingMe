@@ -30,7 +30,7 @@ const ChatHeader = () => {
   return (
     <div className="px-2 py-2 sm:px-4 sm:py-2.5 bg-[#0a0a0a] border-b border-white/5 sticky top-0 z-30 w-full overflow-hidden">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2 overflow-hidden mr-2">
+        <div className="flex items-center gap-2 overflow-hidden mr-2 flex-1 min-w-0">
           {/* Back Button */}
           <button
             onClick={() => setSelectedUser(null)}
@@ -56,7 +56,7 @@ const ChatHeader = () => {
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-[#e9edef] text-[15px] sm:text-[16px] truncate">
+              <h3 className="font-bold text-[#e9edef] text-[15px] sm:text-[16px] truncate max-w-[140px] sm:max-w-none">
                 {selectedUser.fullName || selectedUser.name}
               </h3>
               <p className="text-[11px] sm:text-[12px] text-[var(--wa-gray)]">
