@@ -30,6 +30,13 @@ const CallModal = () => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play().catch(e => console.error("Error playing remote stream:", e));
+
+            // Debug audio tracks
+            const audioTracks = remoteStream.getAudioTracks();
+            console.log('🔊 Remote stream audio tracks:', audioTracks.length);
+            audioTracks.forEach(track => {
+                console.log('  Track enabled:', track.enabled, 'muted:', track.muted);
+            });
         }
     }, [remoteStream]);
 
@@ -66,7 +73,7 @@ const CallModal = () => {
                 {call.type === 'video' && (
                     <div className={`relative bg-black flex items-center justify-center ${call.status === 'connected' ? 'flex-1 h-full' : 'aspect-video'}`}>
                         {call.status === 'connected' && remoteStream ? (
-                            <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                            <video ref={remoteVideoRef} autoPlay playsInline muted={false} className="w-full h-full object-cover" />
                         ) : (
                             <div className="flex flex-col items-center justify-center">
                                 <div className="size-20 rounded-full overflow-hidden ring-2 ring-white/20 mb-4">
