@@ -11,8 +11,6 @@ import {
 
 const WALLPAPERS = [
   { id: "obsidian", name: "Default Obsidian", url: "https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png" },
-  { id: "midnight", name: "Midnight Blue", url: "https://i.pinimg.com/originals/97/21/05/972105c5a775f38cf33d3924a05d8b57.jpg" },
-  { id: "forest", name: "Deep Forest", url: "https://i.pinimg.com/originals/24/76/65/247665796a5789f6df849646f2c5890e.jpg" },
   { id: "minimal", name: "Minimal Gray", url: "https://wallpaperaccess.com/full/1556608.jpg" },
   { id: "abstract", name: "Dark Abstract", url: "https://wallpaperaccess.com/full/2109.jpg" },
   { id: "black", name: "Pure Black", url: "" }, // Empty string for CSS background color fallback
