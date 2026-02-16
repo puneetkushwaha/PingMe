@@ -23,10 +23,15 @@ const Sidebar = () => {
   const filteredItems = allItems.filter((item) => {
     const itemName = item.fullName || item.name || "";
     const matchesSearch = itemName.toLowerCase().includes(searchQuery.toLowerCase());
+    // Only show item if it has a last message or is a group (groups always show for now)
+    const hasHistory = item.lastMessage || item.isGroup;
 
-    if (activeFilter === "unread") return matchesSearch && unreadCounts[item._id] > 0;
-    if (activeFilter === "groups") return matchesSearch;
-    return matchesSearch;
+    if (activeFilter === "unread") return matchesSearch && unreadCounts[item._id] > 0 && hasHistory;
+    if (activeFilter === "groups") return matchesSearch; // Groups filter uses 'groups' array which are explicitly groups
+
+    // For 'all', we only show items with history. 
+    // To chat with a new user, one must use the "New Chat" button (ContactsSidebar).
+    return matchesSearch && hasHistory;
   });
 
   if (isUsersLoading) return <SidebarSkeleton />;
