@@ -27,6 +27,30 @@ export const useCallStore = create((set, get) => ({
     },
 
     setCall: (call) => set({ call }),
+    isCallLoading: false,
+    calls: [], // Call history
+
+    getCallHistory: async () => {
+        set({ isCallLoading: true });
+        try {
+            const res = await axiosInstance.get("/calls");
+            set({ calls: res.data });
+        } catch (error) {
+            console.error("Error fetching call history:", error);
+        } finally {
+            set({ isCallLoading: false });
+        }
+    },
+
+    logCall: async (callData) => {
+        try {
+            await axiosInstance.post("/calls/log", callData);
+            // Refresh history
+            get().getCallHistory();
+        } catch (error) {
+            console.error("Error logging call:", error);
+        }
+    },
 
     initiateCall: async (receiverId, type = "audio") => {
         const socket = useAuthStore.getState().socket;
