@@ -166,17 +166,8 @@ export const useCallStore = create((set, get) => ({
         const socket = useAuthStore.getState().socket;
 
         if (call) {
-            const to = call.to || call.from;
-            if (socket && to) socket.emit("call:ended", { to });
+            socket.emit("call:ended", { to: call.to });
         }
-
-        if (localStream) {
-            localStream.getTracks().forEach(track => track.stop());
-        }
-        if (peerConnection) {
-            peerConnection.close();
-        }
-        set({ call: null, localStream: null, remoteStream: null, peerConnection: null });
     },
 
     subscribeToCalls: () => {
