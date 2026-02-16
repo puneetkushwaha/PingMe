@@ -3,7 +3,7 @@ import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCallStore } from "../store/useCallStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings } from "lucide-react";
+import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import NewGroupModal from "./NewGroupModal";
 
@@ -73,6 +73,27 @@ const Sidebar = () => {
                 >
                   <Settings className="size-4" />
                   Settings
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.deferredPrompt) {
+                      window.deferredPrompt.prompt();
+                      window.deferredPrompt.userChoice.then((choice) => {
+                        if (choice.outcome === 'accepted') {
+                          toast.success('PingMe installed! 🎉');
+                        }
+                        window.deferredPrompt = null;
+                      });
+                    } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                      toast.success('Already installed as PWA! ✅');
+                    } else {
+                      toast('Install option not available', { icon: 'ℹ️' });
+                    }
+                  }}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                >
+                  <Download className="size-4" />
+                  Install App
                 </button>
                 <button
                   onClick={logout}
