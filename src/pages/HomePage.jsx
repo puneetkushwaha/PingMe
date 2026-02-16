@@ -6,7 +6,7 @@ import {
   MessageSquare, Users, CircleDashed, Settings, Star, MessageCircle,
   Phone, Archive, LogOut, UserPlus, Video,
   Plus, Moon, Sun, Wallpaper, MessageSquarePlus,
-  Send, Bell, Shield, Lock, Smartphone, Image as ImageIcon, Volume2
+  Send, Bell, Shield, Lock, Smartphone, Image as ImageIcon, Volume2, Download
 } from "lucide-react";
 
 const WALLPAPERS = [
@@ -288,6 +288,32 @@ const HomePage = () => {
                       </div>
                       <input type="checkbox" className="toggle toggle-success toggle-sm" />
                     </div>
+                    <button
+                      onClick={() => {
+                        if (window.deferredPrompt) {
+                          window.deferredPrompt.prompt();
+                          window.deferredPrompt.userChoice.then((choice) => {
+                            if (choice.outcome === 'accepted') {
+                              toast.success('PingMe installed! 🎉');
+                            }
+                            window.deferredPrompt = null;
+                          });
+                        } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                          toast.success('Already installed as PWA! ✅');
+                        } else {
+                          toast('Install option not available on this device', { icon: 'ℹ️' });
+                        }
+                      }}
+                      className="w-full p-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Download className="size-5 text-[var(--wa-teal)]" />
+                        <div className="text-left">
+                          <h3 className="text-[#e9edef] font-medium text-sm">Install App</h3>
+                          <p className="text-[var(--wa-gray)] text-xs">Use PingMe as a standalone app</p>
+                        </div>
+                      </div>
+                    </button>
                   </div>
                 </div>
 
