@@ -22,12 +22,14 @@ const CallModal = () => {
     useEffect(() => {
         if (localVideoRef.current && localStream) {
             localVideoRef.current.srcObject = localStream;
+            localVideoRef.current.play().catch(e => console.error("Error playing local stream:", e));
         }
     }, [localStream]);
 
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play().catch(e => console.error("Error playing remote stream:", e));
         }
     }, [remoteStream]);
 
@@ -42,16 +44,18 @@ const CallModal = () => {
     const displayPic = displayInfo?.profilePic || displayInfo?.groupPic || "/avatar.png";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-[#202c33] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-zinc-700">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm ${call.status === 'connected' && call.type === 'video' ? '' : 'p-4'}`}>
+            <div className={`bg-[#202c33] w-full ${call.status === 'connected' && call.type === 'video' ? 'h-full w-full max-w-none rounded-none' : 'max-w-lg rounded-2xl'} overflow-hidden shadow-2xl border border-zinc-700 relative flex flex-col`}>
 
                 {/* Call Info */}
-                <div className="p-8 flex flex-col items-center text-center">
-                    <div className="size-24 rounded-full overflow-hidden mb-4 ring-4 ring-[#00a884]">
-                        <img src={displayPic} alt="" className="w-full h-full object-cover" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-white mb-1">{displayName}</h2>
-                    <p className="text-[var(--wa-gray)] animate-pulse">
+                <div className={`flex flex-col items-center text-center ${call.status === 'connected' && call.type === 'video' ? 'absolute top-12 left-0 w-full z-20 pointer-events-none' : 'p-8'}`}>
+                    {(call.status !== 'connected' || call.type !== 'video') && (
+                        <div className="size-24 rounded-full overflow-hidden mb-4 ring-4 ring-[#00a884]">
+                            <img src={displayPic} alt="" className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    <h2 className={`font-bold text-white mb-1 ${call.status === 'connected' && call.type === 'video' ? 'text-xl drop-shadow-md' : 'text-2xl'}`}>{displayName}</h2>
+                    <p className={`animate-pulse ${call.status === 'connected' && call.type === 'video' ? 'text-white/80 text-sm drop-shadow-md' : 'text-[var(--wa-gray)]'}`}>
                         {call.status === 'calling' ? 'Calling...' :
                             call.status === 'incoming' ? 'Incoming ' + call.type + ' call...' :
                                 'Connected'}
@@ -59,17 +63,29 @@ const CallModal = () => {
                 </div>
 
                 {/* Video Streams */}
-                {call.status === 'connected' && call.type === 'video' && (
-                    <div className="relative aspect-video bg-black flex items-center justify-center">
-                        <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                        <div className="absolute bottom-4 right-4 w-32 aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-600 shadow-lg">
+                {call.type === 'video' && (
+                    <div className={`relative bg-black flex items-center justify-center ${call.status === 'connected' ? 'flex-1 h-full' : 'aspect-video'}`}>
+                        {call.status === 'connected' && remoteStream ? (
+                            <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="size-20 rounded-full overflow-hidden ring-2 ring-white/20 mb-4">
+                                    <img src={displayPic} alt="" className="w-full h-full object-cover opacity-50" />
+                                </div>
+                                <p className="text-white/50 text-sm">Waiting for video...</p>
+                            </div>
+                        )}
+                        <div className="absolute bottom-4 right-4 w-32 aspect-video bg-zinc-800 rounded-lg overflow-hidden border border-zinc-600 shadow-lg z-10">
                             <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                         </div>
                     </div>
                 )}
 
+                {/* Always render audio for remote stream */}
+                <audio ref={remoteVideoRef} autoPlay className="hidden" />
+
                 {/* Controls */}
-                <div className="p-6 bg-[#111b21] flex justify-center items-center gap-8">
+                <div className={`p-6 flex justify-center items-center gap-8 ${call.status === 'connected' && call.type === 'video' ? 'absolute bottom-8 left-1/2 -translate-x-1/2 bg-transparent z-20' : 'bg-[#111b21]'}`}>
                     {call.status === 'incoming' ? (
                         <>
                             <button
@@ -89,14 +105,14 @@ const CallModal = () => {
                         <>
                             <button
                                 onClick={toggleMic}
-                                className={`transition-colors ${isMuted ? 'text-red-500' : 'text-[var(--wa-gray)] hover:text-white'}`}
+                                className={`p-4 rounded-full transition-colors font-bold backdrop-blur-md ${isMuted ? 'bg-white text-black' : 'bg-black/40 text-white hover:bg-black/60'}`}
                             >
                                 {isMuted ? <MicOff className="size-6" /> : <Mic className="size-6" />}
                             </button>
                             {call.type === 'video' && (
                                 <button
                                     onClick={toggleVideo}
-                                    className={`transition-colors ${isVideoOff ? 'text-red-500' : 'text-[var(--wa-gray)] hover:text-white'}`}
+                                    className={`p-4 rounded-full transition-colors backdrop-blur-md ${isVideoOff ? 'bg-white text-black' : 'bg-black/40 text-white hover:bg-black/60'}`}
                                 >
                                     {isVideoOff ? <VideoOff className="size-6" /> : <Video className="size-6" />}
                                 </button>

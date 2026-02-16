@@ -54,11 +54,19 @@ body {
 }
 
 /* Message Tails */
+/* Message Tails & Styling */
 .chat-bubble {
   position: relative;
-  max-width: 70% !important;
-  border-radius: 8px;
-  transition: none;
+  max-width: 85% !important;
+  /* Increased width for mobile */
+  border-radius: 12px;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+}
+
+@media (min-width: 640px) {
+  .chat-bubble {
+    max-width: 65% !important;
+  }
 }
 
 .chat-bubble-sent {

@@ -28,9 +28,9 @@ const ChatHeader = () => {
   const isOnline = onlineUsers.includes(selectedUser._id);
 
   return (
-    <div className="px-4 py-2 sm:px-4 sm:py-2.5 bg-[#0a0a0a] border-b border-white/5 sticky top-0 z-30 transition-all">
-      <div className="flex items-center justify-between max-w-full mx-auto">
-        <div className="flex items-center gap-2 sm:gap-4">
+    <div className="px-2 py-2 sm:px-4 sm:py-2.5 bg-[#0a0a0a] border-b border-white/5 sticky top-0 z-30 w-full overflow-hidden">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2 overflow-hidden mr-2">
           {/* Back Button */}
           <button
             onClick={() => setSelectedUser(null)}
@@ -55,8 +55,8 @@ const ChatHeader = () => {
               )}
             </div>
 
-            <div className="min-w-0">
-              <h3 className="font-bold text-[#e9edef] text-[15px] sm:text-[16px] truncate leading-tight">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-[#e9edef] text-[15px] sm:text-[16px] truncate">
                 {selectedUser.fullName || selectedUser.name}
               </h3>
               <p className="text-[11px] sm:text-[12px] text-[var(--wa-gray)]">
@@ -75,9 +75,9 @@ const ChatHeader = () => {
         </div>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-1 sm:gap-2 relative">
+        <div className="flex items-center gap-0.5 sm:gap-2 relative shrink-0">
           {isSearchOpen && (
-            <div className="absolute right-full mr-2 flex items-center bg-[#1a1a1a] rounded-lg px-3 h-8 w-40 sm:w-56 border border-white/5 shadow-xl animate-in fade-in slide-in-from-right-2 duration-200">
+            <div className="absolute right-full mr-2 flex items-center bg-[#1a1a1a] rounded-lg px-2 h-8 w-32 sm:w-56 border border-white/5 shadow-xl z-50">
               <input
                 autoFocus
                 type="text"
@@ -98,22 +98,22 @@ const ChatHeader = () => {
 
           <button
             onClick={() => setIsSearchOpen(true)}
-            className={`p-2 rounded-full hover:bg-white/5 ${isSearchOpen ? 'text-[var(--wa-teal)]' : 'text-[var(--wa-gray)]'}`}
+            className={`p-1.5 sm:p-2 rounded-full hover:bg-white/5 ${isSearchOpen ? 'text-[var(--wa-teal)]' : 'text-[var(--wa-gray)]'}`}
           >
-            <Search className="size-4.5" />
+            <Search className="size-5 sm:size-4.5" />
           </button>
 
           <button
             onClick={() => initiateCall(selectedUser._id, "audio")}
-            className="p-2 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
+            className="p-1.5 sm:p-2 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
           >
-            <Phone className="size-4.5" />
+            <Phone className="size-5 sm:size-4.5" />
           </button>
           <button
             onClick={() => initiateCall(selectedUser._id, "video")}
-            className="p-2 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
+            className="p-1.5 sm:p-2 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
           >
-            <Video className="size-5" />
+            <Video className="size-5 sm:size-5" />
           </button>
         </div>
       </div>

@@ -64,7 +64,7 @@ const HomePage = () => {
   }, [subscribeToMessages, unsubscribeFromMessages]);
 
   return (
-    <div className="h-screen bg-[var(--wa-chat-bg)] flex overflow-hidden flex-col lg:flex-row">
+    <div className="h-[100dvh] w-full bg-[var(--wa-chat-bg)] flex overflow-hidden flex-col lg:flex-row relative">
       {/* Left/Bottom Navigation */}
       <LeftNav className={`${selectedUser ? 'hidden' : 'flex'} lg:flex`} />
 

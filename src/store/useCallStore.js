@@ -35,13 +35,16 @@ export const useCallStore = create((set, get) => ({
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true,
-                video: type === "video"
+                video: type === "video" ? { facingMode: "user" } : false
             });
 
             set({ localStream: stream, call: { to: receiverId, type, status: 'calling' } });
 
             const pc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+                iceServers: [
+                    { urls: "stun:stun.l.google.com:19302" },
+                    { urls: "stun:global.stun.twilio.com:3478" }
+                ]
             });
 
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
@@ -81,13 +84,16 @@ export const useCallStore = create((set, get) => ({
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true,
-                video: call.type === "video"
+                video: call.type === "video" ? { facingMode: "user" } : false
             });
 
             set({ localStream: stream });
 
             const pc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+                iceServers: [
+                    { urls: "stun:stun.l.google.com:19302" },
+                    { urls: "stun:global.stun.twilio.com:3478" }
+                ]
             });
 
             stream.getTracks().forEach(track => pc.addTrack(track, stream));

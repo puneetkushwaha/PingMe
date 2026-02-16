@@ -85,9 +85,9 @@ const ChatContainer = () => {
                 ref={messageEndRef}
               >
                 <div
-                  className={`chat-bubble p-2 sm:p-2.5 relative ${isSentByMe
-                    ? "text-[#e9edef] chat-bubble-sent ml-12"
-                    : "text-[#e9edef] chat-bubble-received mr-12"
+                  className={`chat-bubble p-2 sm:p-2.5 relative shadow-sm ${isSentByMe
+                    ? "text-[#e9edef] chat-bubble-sent"
+                    : "text-[#e9edef] chat-bubble-received"
                     }`}
                 >
                   {/* Sender Name in Group */}
