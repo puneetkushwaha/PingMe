@@ -26,6 +26,9 @@ messaging.onBackgroundMessage((payload) => {
         badge: '/icon-192x192.png',
         tag: 'pingme-notification',
         requireInteraction: false,
+        vibrate: [200, 100, 200], // Vibration pattern
+        silent: false, // Enable sound
+        sound: '/noti.wav', // Custom notification sound
         data: payload.data
     };
 
