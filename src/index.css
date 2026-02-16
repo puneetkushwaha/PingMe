@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root[data-theme="dark"] {
+  --wa-header-bg: #0a0a0a;
+  --wa-sidebar-bg: #0a0a0a;
+  --wa-chat-bg: #050505;
+  --wa-outgoing-msg-bg: #005c4b;
+  --wa-incoming-msg-bg: #1a1a1a;
+  --wa-teal: #00a884;
+  --wa-gray: #8696a0;
+  --wa-input-bg: #1a1a1a;
+  --wa-text-primary: #e9edef;
+  --glass-bg: #0a0a0a;
+  --premium-black: #050505;
+}
+
+:root[data-theme="light"] {
+  --wa-header-bg: #0a0a0a;
+  --wa-sidebar-bg: #0a0a0a;
+  --wa-chat-bg: #050505;
+  --wa-outgoing-msg-bg: #005c4b;
+  --wa-incoming-msg-bg: #1a1a1a;
+  --wa-teal: #00a884;
+  --wa-gray: #8696a0;
+  --wa-input-bg: #1a1a1a;
+  --wa-text-primary: #e9edef;
+  --glass-bg: #0a0a0a;
+}
+
+body {
+  background-color: var(--wa-sidebar-bg);
+  color: var(--wa-text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 168, 132, 0.5);
+}
+
+/* Message Tails */
+.chat-bubble {
+  position: relative;
+  max-width: 70% !important;
+  border-radius: 8px;
+  transition: none;
+}
+
+.chat-bubble-sent {
+  border-top-right-radius: 0;
+  background-color: var(--wa-outgoing-msg-bg);
+}
+
+.chat-bubble-received {
+  border-top-left-radius: 0;
+  background-color: var(--wa-incoming-msg-bg);
+}
+
+.chat-bubble-sent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -8px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--wa-outgoing-msg-bg);
+  clip-path: polygon(0 0, 0 100%, 100% 0);
+}
+
+.chat-bubble-received::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--wa-incoming-msg-bg);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.glass-morphism {
+  background: var(--wa-header-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-glass {
+  background: var(--wa-sidebar-bg);
+}
+
+.premium-gradient {
+  background: var(--wa-teal);
+}
+
+.active-chat-gradient {
+  background-color: #1a1a1a;
+  border-left: 3px solid var(--wa-teal);
+}
+
+.premium-shadow {
+  box-shadow: none;
+}
+
+.floating-glass {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.obsidian-glow {
+  box-shadow: 0 0 20px rgba(0, 168, 132, 0.15);
+}
