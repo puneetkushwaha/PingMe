@@ -57,10 +57,23 @@ export const useCallStore = create((set, get) => ({
         if (!socket) return;
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: type === "video" ? { facingMode: "user" } : false
-            });
+            let stream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: type === "video" ? { facingMode: "user" } : false
+                });
+            } catch (err) {
+                console.warn("Primary camera access failed, retrying with generic constraints:", err);
+                if (type === "video") {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: true // Fallback to any available camera
+                    });
+                } else {
+                    throw err;
+                }
+            }
 
             set({ localStream: stream, call: { to: receiverId, type, status: 'calling' } });
 
@@ -106,10 +119,23 @@ export const useCallStore = create((set, get) => ({
         if (!socket || !call) return;
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: call.type === "video" ? { facingMode: "user" } : false
-            });
+            let stream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: call.type === "video" ? { facingMode: "user" } : false
+                });
+            } catch (err) {
+                console.warn("Primary camera access failed (accept), retrying:", err);
+                if (call.type === "video") {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: true
+                    });
+                } else {
+                    throw err;
+                }
+            }
 
             set({ localStream: stream });
 

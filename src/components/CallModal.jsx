@@ -81,8 +81,10 @@ const CallModal = () => {
                     </div>
                 )}
 
-                {/* Always render audio for remote stream */}
-                <audio ref={remoteVideoRef} autoPlay className="hidden" />
+                {/* Audio for audio-only calls (video calls use the video element for audio) */}
+                {call.type === 'audio' && (
+                    <audio ref={remoteVideoRef} autoPlay className="hidden" />
+                )}
 
                 {/* Controls */}
                 <div className={`p-6 flex justify-center items-center gap-8 ${call.status === 'connected' && call.type === 'video' ? 'absolute bottom-8 left-1/2 -translate-x-1/2 bg-transparent z-20' : 'bg-[#111b21]'}`}>
