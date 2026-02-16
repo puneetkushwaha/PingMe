@@ -170,7 +170,9 @@ const Sidebar = () => {
                 <div className={`font-bold truncate text-[15px] ${selectedUser?._id === item._id ? "text-[var(--wa-teal)]" : "text-[#e9edef]"}`}>
                   {item.fullName || item.name}
                 </div>
-                <span className="text-[10px] text-[var(--wa-gray)]">10:30 AM</span>
+                <span className="text-[10px] text-[var(--wa-gray)]">
+                  {item.lastMessageTime ? new Date(item.lastMessageTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : ''}
+                </span>
               </div>
               <div className="text-[12px] truncate flex items-center gap-1 text-[var(--wa-gray)]">
                 {typingUsers.includes(item._id) ? (
