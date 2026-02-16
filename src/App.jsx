@@ -13,9 +13,13 @@ import { useThemeStore } from "./store/useThemeStore";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast"; // Added toast function
 
 import { useCallStore } from "./store/useCallStore";
 import CallModal from "./components/CallModal";
+
+import { messaging, getToken, onMessage, VAPID_KEY } from "./lib/firebase"; // Added FCM imports
+import { axiosInstance } from "./lib/axios"; // Added axiosInstance
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -57,6 +61,57 @@ const App = () => {
       Notification.requestPermission().then(permission => {
         console.log('Notification permission:', permission);
       });
+    }
+  }, [authUser]);
+
+  // FCM Token Registration
+  useEffect(() => {
+    if (authUser && 'Notification' in window) {
+      const registerFCMToken = async () => {
+        try {
+          // Register service worker
+          if ('serviceWorker' in navigator) {
+            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            console.log('Service Worker registered:', registration);
+
+            // Request notification permission
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+              // Get FCM token
+              const token = await getToken(messaging, {
+                vapidKey: VAPID_KEY,
+                serviceWorkerRegistration: registration
+              });
+
+              if (token) {
+                console.log('FCM Token:', token);
+                // Send token to backend
+                await axiosInstance.post('/fcm/token', { token });
+                console.log('FCM token saved to backend');
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error registering FCM:', error);
+        }
+      };
+
+      registerFCMToken();
+    }
+  }, [authUser]);
+
+  // Handle foreground messages
+  useEffect(() => {
+    if (authUser) {
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log('Foreground message received:', payload);
+        toast(`${payload.notification.title}: ${payload.notification.body}`, {
+          icon: '💬',
+          duration: 4000
+        });
+      });
+
+      return () => unsubscribe();
     }
   }, [authUser]);
 
