@@ -214,7 +214,12 @@ export const useChatStore = create((set, get) => ({
             }
           }));
         }
-        toast.success(`New message from ${isGroupMessage ? "Group" : newMessage.senderId}`);
+
+        // Find sender name from users list
+        const sender = get().users.find(u => u._id === newMessage.senderId);
+        const senderName = sender?.fullName || "Someone";
+
+        toast.success(`New message from ${isGroupMessage ? "Group" : senderName}`);
       }
 
       const sound = new Audio("/notification.mp3");
@@ -223,7 +228,11 @@ export const useChatStore = create((set, get) => ({
         sound.play().catch(err => console.log("Audio play failed:", err)); // User interaction requirement
 
         if (!isMessageForSelectedChat && Notification.permission === "granted") {
-          new Notification(`New message from ${isGroupMessage ? "Group" : newMessage.senderId}`, {
+          // Find sender name for notification
+          const sender = get().users.find(u => u._id === newMessage.senderId);
+          const senderName = sender?.fullName || "Someone";
+
+          new Notification(`New message from ${isGroupMessage ? "Group" : senderName}`, {
             body: newMessage.text || "Sent a media file",
             icon: "/icon-192x192.png"
           });
