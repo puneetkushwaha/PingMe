@@ -49,14 +49,15 @@ const HomePage = () => {
     blockUser,
   } = useChatStore();
 
-  const { initiateCall } = useCallStore();
+  const { initiateCall, calls, getCallHistory } = useCallStore();
 
   const { activeSidebar, authUser, setProfileOpen, onlineUsers, setActiveSidebar } = useAuthStore();
   const { theme, setTheme, wallpaper, setWallpaper } = useThemeStore();
 
   useEffect(() => {
     if (activeSidebar === "status") getStatuses();
-  }, [activeSidebar, getStatuses]);
+    if (activeSidebar === "calls") getCallHistory();
+  }, [activeSidebar, getStatuses, getCallHistory]);
 
   useEffect(() => {
     subscribeToMessages();
@@ -155,36 +156,41 @@ const HomePage = () => {
               </div>
 
               <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="flex items-center gap-4 cursor-pointer p-4 bg-[#00a884]/10 rounded-lg border border-[#00a884]/20 hover:bg-[#00a884]/20 transition-colors group">
-                  <div className="size-12 bg-[#00a884] rounded-full flex items-center justify-center text-[#111b21]">
-                    <Phone className="size-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-[#00a884] font-bold">Start a Call</h3>
-                    <p className="text-xs text-[var(--wa-gray)]">Voice or video chat with your friends</p>
-                  </div>
-                </div>
-
                 <div className="space-y-4">
-                  <h4 className="text-[#00a884] text-sm font-medium uppercase px-2">Available Now</h4>
-                  {users.filter(u => onlineUsers.includes(u._id)).length === 0 ? (
-                    <div className="text-[var(--wa-gray)] text-center py-10 text-sm italic">No one online to call right now</div>
+                  <h4 className="text-[#00a884] text-sm font-medium uppercase px-2">Recent Calls</h4>
+                  {calls.length === 0 ? (
+                    <div className="text-[var(--wa-gray)] text-center py-10 text-sm italic">No call history</div>
                   ) : (
-                    users.filter(u => onlineUsers.includes(u._id)).map((user) => (
-                      <div key={user._id} className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg transition-colors group">
-                        <img src={user.profilePic || "/avatar.png"} className="size-12 rounded-full object-cover" alt="" />
-                        <div className="flex-1 border-b border-zinc-800 pb-3 group-last:border-none flex items-center justify-between">
-                          <div>
-                            <h3 className="text-[#e9edef] font-medium">{user.fullName}</h3>
-                            <p className="text-xs text-emerald-500">Available</p>
-                          </div>
-                          <div className="flex gap-4">
-                            <button onClick={() => initiateCall(user._id, 'audio')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Phone className="size-5" /></button>
-                            <button onClick={() => initiateCall(user._id, 'video')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Video className="size-5" /></button>
+                    calls.map((call) => {
+                      const isIncoming = call.receiverId._id === authUser._id;
+                      const otherUser = isIncoming ? call.callerId : call.receiverId;
+                      if (!otherUser) return null;
+
+                      return (
+                        <div key={call._id} className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg transition-colors group">
+                          <img src={otherUser.profilePic || "/avatar.png"} className="size-12 rounded-full object-cover" alt="" />
+                          <div className="flex-1 border-b border-zinc-800 pb-3 group-last:border-none flex items-center justify-between">
+                            <div>
+                              <h3 className={`font-medium ${call.status === 'missed' ? 'text-red-500' : 'text-[#e9edef]'}`}>{otherUser.fullName}</h3>
+                              <div className="flex items-center gap-1 text-xs text-[var(--wa-gray)]">
+                                {isIncoming ? (
+                                  call.status === 'missed' ? <Phone className="size-3 text-red-500 rotate-[135deg]" /> : <Phone className="size-3 text-green-500 rotate-[135deg]" />
+                                ) : (
+                                  <Phone className="size-3 text-green-500 rotate-45" />
+                                )}
+                                <span>
+                                  {new Date(call.startedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}, {new Date(call.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex gap-4">
+                              <button onClick={() => initiateCall(otherUser._id, 'audio')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Phone className="size-5" /></button>
+                              <button onClick={() => initiateCall(otherUser._id, 'video')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Video className="size-5" /></button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      )
+                    })
                   )}
                 </div>
               </div>

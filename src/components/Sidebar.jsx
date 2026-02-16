@@ -59,41 +59,28 @@ const Sidebar = () => {
           <div className="relative group">
             <EllipsisVertical className="size-5 cursor-pointer hover:text-white transition-colors" />
             <div className="absolute right-0 top-10 w-48 bg-[#233138] rounded-lg shadow-2xl border border-white/5 hidden group-hover:block z-50 overflow-hidden">
-              <div className="space-y-4">
-                <h4 className="text-[#00a884] text-sm font-medium uppercase px-2">Recent Calls</h4>
-                {calls.length === 0 ? (
-                  <div className="text-[var(--wa-gray)] text-center py-10 text-sm italic">No call history</div>
-                ) : (
-                  calls.map((call) => {
-                    const isIncoming = call.receiverId._id === authUser._id;
-                    const otherUser = isIncoming ? call.callerId : call.receiverId;
-                    if (!otherUser) return null;
-
-                    return (
-                      <div key={call._id} className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg transition-colors group">
-                        <img src={otherUser.profilePic || "/avatar.png"} className="size-12 rounded-full object-cover" alt="" />
-                        <div className="flex-1 border-b border-zinc-800 pb-3 group-last:border-none flex items-center justify-between">
-                          <div>
-                            <h3 className={`font-medium ${call.status === 'missed' ? 'text-red-500' : 'text-[#e9edef]'}`}>{otherUser.fullName}</h3>
-                            <div className="flex items-center gap-1 text-xs text-[var(--wa-gray)]">
-                              {isIncoming ? (
-                                call.status === 'missed' ? <Phone className="size-3 text-red-500 rotate-[135deg]" /> : <Phone className="size-3 text-green-500 rotate-[135deg]" />
-                              ) : (
-                                <Phone className="size-3 text-green-500 rotate-45" />
-                              )}
-                              <span>
-                                {new Date(call.startedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}, {new Date(call.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex gap-4">
-                            <button onClick={() => initiateCall(otherUser._id, 'audio')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Phone className="size-5" /></button>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })
-                )}
+              <div className="flex flex-col">
+                <button
+                  onClick={() => setIsGroupModalOpen(true)}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                >
+                  <UserPlus className="size-4" />
+                  New group
+                </button>
+                <button
+                  onClick={() => setActiveSidebar("settings")}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                >
+                  <Settings className="size-4" />
+                  Settings
+                </button>
+                <button
+                  onClick={logout}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 border-t border-white/5"
+                >
+                  <LogOut className="size-4" />
+                  Logout
+                </button>
               </div>
             </div>
           </div>

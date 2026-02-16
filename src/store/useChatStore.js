@@ -217,6 +217,19 @@ export const useChatStore = create((set, get) => ({
         toast.success(`New message from ${isGroupMessage ? "Group" : newMessage.senderId}`);
       }
 
+      const sound = new Audio("/notification.mp3");
+
+      if (!document.hasFocus() || !isMessageForSelectedChat) {
+        sound.play().catch(err => console.log("Audio play failed:", err)); // User interaction requirement
+
+        if (!isMessageForSelectedChat && Notification.permission === "granted") {
+          new Notification(`New message from ${isGroupMessage ? "Group" : newMessage.senderId}`, {
+            body: newMessage.text || "Sent a media file",
+            icon: "/icon-192x192.png"
+          });
+        }
+      }
+
       // ✅ UPDATE SIDEBAR: Update lastMessage and move user to top
       set((state) => {
         const otherUserId = isGroupMessage ? newMessage.groupId : (newMessage.senderId === useAuthStore.getState().authUser._id ? newMessage.receiverId : newMessage.senderId);
