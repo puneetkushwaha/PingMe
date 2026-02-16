@@ -214,16 +214,27 @@ const MessageInput = () => {
 
       {/* Recording UI Overlay */}
       {isRecording && (
-        <div className="absolute inset-0 bg-[#0a0a0a] flex items-center gap-4 px-4 z-50">
-          <div className="flex-1 flex items-center gap-3 bg-[#1a1a1a] p-2 rounded-full border border-white/5">
-            <Mic className="size-4 text-red-500 animate-pulse ml-2" />
-            <span className="text-white font-mono text-sm tabular-nums">{formatTime(recordingDuration)}</span>
-            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden mx-2">
+        <div className="absolute inset-0 bg-[#0a0a0a] flex items-center gap-2 px-2 z-50">
+          <div className="flex-1 flex items-center gap-2 bg-[#1a1a1a] p-1.5 rounded-full border border-white/5 min-w-0">
+            <Mic className="size-3.5 text-red-500 animate-pulse ml-1.5 shrink-0" />
+            <span className="text-white font-mono text-xs tabular-nums shrink-0">{formatTime(recordingDuration)}</span>
+            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden mx-1 min-w-0">
               <div className="bg-red-500 h-full animate-pulse" style={{ width: '100%' }} />
             </div>
           </div>
-          <button onClick={cancelRecording} className="text-red-500 p-2 hover:bg-white/5 rounded-full">
-            <Trash2 className="size-5" />
+          <button
+            onClick={stopRecording}
+            className="bg-[#00a884] text-white p-2 hover:bg-[#00b894] rounded-full transition-all active:scale-95 shrink-0"
+            title="Send"
+          >
+            <Send className="size-4" />
+          </button>
+          <button
+            onClick={cancelRecording}
+            className="text-red-500 p-1.5 hover:bg-white/5 rounded-full shrink-0"
+            title="Cancel"
+          >
+            <Trash2 className="size-4" />
           </button>
         </div>
       )}
