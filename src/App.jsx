@@ -51,6 +51,15 @@ const App = () => {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
+  // Request Notification Permission
+  useEffect(() => {
+    if (authUser && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        console.log('Notification permission:', permission);
+      });
+    }
+  }, [authUser]);
+
   console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
