@@ -13,7 +13,6 @@ const WALLPAPERS = [
   { id: "obsidian", name: "Default Obsidian", url: "https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png" },
   { id: "minimal", name: "Minimal Gray", url: "https://wallpaperaccess.com/full/1556608.jpg" },
   { id: "abstract", name: "Dark Abstract", url: "https://wallpaperaccess.com/full/2109.jpg" },
-  { id: "black", name: "Pure Black", url: "" }, // Empty string for CSS background color fallback
 ];
 import toast from "react-hot-toast";
 
