@@ -9,7 +9,7 @@ import NewGroupModal from "./NewGroupModal";
 
 const Sidebar = () => {
   const { getUsers, users, getGroups, groups, selectedUser, setSelectedUser, isUsersLoading, isGroupsLoading, unreadCounts, typingUsers } = useChatStore();
-  const { onlineUsers, logout, activeSidebar, setActiveSidebar } = useAuthStore();
+  const { onlineUsers, logout, activeSidebar = "chats", setActiveSidebar } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all"); // 'all', 'unread', 'groups'
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
