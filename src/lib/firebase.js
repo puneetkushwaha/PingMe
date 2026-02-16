@@ -19,6 +19,6 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 // VAPID key for web push
-const VAPID_KEY = "pLZ6OhKcHAmf4BBdMer2i_WOljRkfI_LoknEcRnwvbc";
+const VAPID_KEY = "BOwrNrD8o2UVhsE1Npz-0vFmtK0esGAZZFotdZ6SHj2L1xdZcsRYBPeKNlS3C5dkLDLFeCQdvbdTGTsf0HU02lY";
 
 export { messaging, getToken, onMessage, VAPID_KEY };
