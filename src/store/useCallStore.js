@@ -87,7 +87,14 @@ export const useCallStore = create((set, get) => ({
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
             pc.ontrack = (event) => {
-                set({ remoteStream: event.streams[0] });
+                console.log('🎥 [CALLER] Remote track received:', event.streams[0]);
+                console.log('Track kind:', event.track.kind);
+                if (event.streams && event.streams[0]) {
+                    set({ remoteStream: event.streams[0] });
+                    console.log('✅ [CALLER] Remote stream set in state');
+                } else {
+                    console.error('❌ [CALLER] No remote stream in event');
+                }
             };
 
             pc.onicecandidate = (event) => {
@@ -149,7 +156,14 @@ export const useCallStore = create((set, get) => ({
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
             pc.ontrack = (event) => {
-                set({ remoteStream: event.streams[0] });
+                console.log('🎥 [RECEIVER] Remote track received:', event.streams[0]);
+                console.log('Track kind:', event.track.kind);
+                if (event.streams && event.streams[0]) {
+                    set({ remoteStream: event.streams[0] });
+                    console.log('✅ [RECEIVER] Remote stream set in state');
+                } else {
+                    console.error('❌ [RECEIVER] No remote stream in event');
+                }
             };
 
             pc.onicecandidate = (event) => {
