@@ -64,7 +64,7 @@ const ChatContainer = () => {
     >
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-4 space-y-4 relative z-10 scrollbar-thin scrollbar-thumb-white/10">
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-24 space-y-4 relative z-10 scrollbar-thin scrollbar-thumb-white/10">
         {filteredMessages.map((message) => {
           const isSentByMe = message.senderId === authUser._id;
           const messageDate = new Date(message.createdAt).toLocaleDateString();
