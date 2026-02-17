@@ -332,6 +332,14 @@ const HomePage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Thank You Message */}
+                <div className="mt-12 mb-8 text-center px-4">
+                  <h3 className="text-[#00a884] text-2xl font-bold italic opacity-80 mb-2 underline decoration-zinc-800 underline-offset-8">
+                    Thank you for using PingMe!
+                  </h3>
+                  <p className="text-[var(--wa-gray)] text-sm">Made with 💚 for the community</p>
+                </div>
               </div>
             </div>
           )}

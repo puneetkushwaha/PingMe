@@ -167,6 +167,12 @@ const ProfileSettings = () => {
                     )}
                 </div>
 
+                {/* Thank You Message */}
+                <div className="mt-12 mb-8 text-center px-4">
+                    <h3 className="text-[#00a884] text-xl font-bold italic opacity-80 mb-2">Thank you for using PingMe!</h3>
+                    <p className="text-[var(--wa-gray)] text-xs">Your support keeps us going 💚</p>
+                </div>
+
             </div>
         </div>
     );
