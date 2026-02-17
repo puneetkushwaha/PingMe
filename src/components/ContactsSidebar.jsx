@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { useChatStore } from "../store/useChatStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { ArrowLeft, Search, UserPlus } from "lucide-react";
 import SaveContactModal from "./SaveContactModal";
 

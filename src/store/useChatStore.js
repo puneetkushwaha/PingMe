@@ -8,7 +8,6 @@ export const useChatStore = create((set, get) => ({
   users: [],
   groups: [],
   starredMessages: [], // { messageId: true } or array of messages
-  starredMessages: [], // { messageId: true } or array of messages
   selectedUser: null, // This can be a User or a Group object
   isUsersLoading: false,
   isGroupsLoading: false,
