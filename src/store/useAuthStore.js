@@ -18,9 +18,37 @@ export const useAuthStore = create((set, get) => ({
   socket: null,
   isProfileOpen: false,
   activeSidebar: "chats", // "chats", "status", "calls", "starred", "archived"
+  linkedDevices: [],
+  isFetchingDevices: false,
 
   setProfileOpen: (isOpen) => set({ isProfileOpen: isOpen }),
   setActiveSidebar: (sidebar) => set({ activeSidebar: sidebar, isProfileOpen: false }),
+
+  // ✅ Get linked devices
+  getLinkedDevices: async () => {
+    set({ isFetchingDevices: true });
+    try {
+      const res = await axiosInstance.get("/auth/linked-devices");
+      set({ linkedDevices: res.data });
+    } catch (error) {
+      console.log("Error in getLinkedDevices:", error);
+    } finally {
+      set({ isFetchingDevices: false });
+    }
+  },
+
+  // ✅ Unlink a device
+  unlinkDevice: async (deviceId) => {
+    try {
+      await axiosInstance.post("/auth/unlink-device", { deviceId });
+      set((state) => ({
+        linkedDevices: state.linkedDevices.filter((d) => d.deviceId !== deviceId),
+      }));
+      toast.success("Device unlinked");
+    } catch (error) {
+      toast.error("Failed to unlink device");
+    }
+  },
 
   // ✅ Check if user is authenticated
   checkAuth: async () => {
