@@ -1,11 +1,14 @@
-import { MessageSquare, Users, CircleDashed, Settings, Star, MessageCircle, Phone, Archive, LogOut, UserPlus } from "lucide-react";
+import { MessageSquare, Users, CircleDashed, Settings, Star, MessageCircle, Phone, Archive, LogOut, UserPlus, MonitorUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { useState } from "react";
+import PairDeviceModal from "./PairDeviceModal";
 
 const LeftNav = ({ className }) => {
     const { logout, authUser, setProfileOpen, isProfileOpen, activeSidebar, setSelectedUser, setActiveSidebar } = useAuthStore();
     const { selectedUser } = useChatStore();
+    const [isPairModalOpen, setIsPairModalOpen] = useState(false);
 
     return (
         <div className={className}>
@@ -42,6 +45,9 @@ const LeftNav = ({ className }) => {
                     </div>
 
                     <div className="h-[1px] w-8 bg-zinc-700"></div>
+                    <div className="relative group cursor-pointer" onClick={() => setIsPairModalOpen(true)}>
+                        <MonitorUp className="size-6 text-[var(--wa-gray)] hover:text-[#e9edef] transition-colors" title="Link a Device" />
+                    </div>
                     <div className="relative group cursor-pointer" onClick={() => logout()}>
                         <LogOut className="size-6 text-[var(--wa-gray)] hover:text-[#e9edef] transition-colors" title="Logout" />
                     </div>
@@ -54,6 +60,8 @@ const LeftNav = ({ className }) => {
                     </div>
                 </div>
             </div>
+
+            <PairDeviceModal isOpen={isPairModalOpen} onClose={() => setIsPairModalOpen(false)} />
 
             {/* Mobile Bottom Nav */}
             <div className={`lg:hidden fixed bottom-0 left-0 right-0 h-[72px] bg-[#111b21]/95 backdrop-blur-md border-t border-zinc-700/50 flex items-center justify-around px-2 z-[60] pb-2 ${selectedUser ? 'hidden' : 'flex'}`}>
@@ -80,6 +88,12 @@ const LeftNav = ({ className }) => {
                         <UserPlus className="size-6" />
                     </div>
                     <span className={`text-[11px] font-medium ${activeSidebar === 'invite' ? 'text-[#e9edef]' : 'text-[var(--wa-gray)]'}`}>Invite</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 cursor-pointer flex-1 py-2" onClick={() => setIsPairModalOpen(true)}>
+                    <div className="p-1 px-4 rounded-full transition-all text-[var(--wa-gray)]">
+                        <MonitorUp className="size-6" />
+                    </div>
+                    <span className="text-[11px] font-medium text-[var(--wa-gray)]">Link</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 cursor-pointer flex-1 py-2" onClick={() => setProfileOpen(true)}>
                     <div className={`p-1 px-4 rounded-full transition-all ${isProfileOpen ? 'bg-[#00a884]/20' : ''}`}>

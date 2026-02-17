@@ -96,26 +96,70 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // ✅ Connect to socket.io
-  connectSocket: () => {
+  // ✅ Connect to socket.io (modified to allow pairing without authUser)
+  connectSocket: (isPairing = false) => {
     const { authUser, socket } = get();
-    if (!authUser || socket?.connected) return;
+    if (!isPairing && (!authUser || socket?.connected)) return;
+    if (isPairing && socket?.connected) return;
 
     const newSocket = io(BASE_URL, {
       query: {
-        userId: authUser._id,
+        userId: authUser?._id || "",
+        isPairing: isPairing ? "true" : "false"
       },
     });
 
     newSocket.connect();
-
-    // Set socket instance
     set({ socket: newSocket });
 
-    // Listen for online users
     newSocket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+    newSocket.on("pairing:code", ({ pairingCode }) => {
+      set({ pairingCode });
+    });
+
+    newSocket.on("pairing:authorized", async ({ pairingToken }) => {
+      await get().loginWithPairingToken(pairingToken);
+    });
+  },
+
+  // ✅ Initiate QR Pairing
+  initiatePairing: () => {
+    get().connectSocket(true);
+    const { socket } = get();
+    // Use a small timeout to ensure socket is connected before emitting
+    setTimeout(() => {
+      const currentSocket = get().socket;
+      if (currentSocket) {
+        currentSocket.emit("pairing:request");
+        set({ isPairing: true });
+      }
+    }, 500);
+  },
+
+  // ✅ Pair current device to a web instance
+  pairWeb: async (pairingCode) => {
+    try {
+      await axiosInstance.post("/auth/pair-device", { pairingCode });
+      toast.success("Web device linked!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Pairing failed");
+    }
+  },
+
+  // ✅ Finalize login on the web instance
+  loginWithPairingToken: async (pairingToken) => {
+    try {
+      const res = await axiosInstance.post("/auth/login-with-token", { pairingToken });
+      set({ authUser: res.data });
+      set({ pairingCode: null, isPairing: false });
+      get().connectSocket(); // Reconnect as full user
+      toast.success("Logged in via QR Code!");
+    } catch (error) {
+      toast.error("Pairing token expired or invalid");
+    }
   },
 
   // ✅ Disconnect socket
