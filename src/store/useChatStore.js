@@ -47,6 +47,14 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  viewStatus: async (statusId) => {
+    try {
+      await axiosInstance.post(`/status/view/${statusId}`);
+    } catch (error) {
+      console.error("Error viewing status:", error);
+    }
+  },
+
   toggleStarMessage: (messageId) => {
     set((state) => {
       const isStarred = state.starredMessages.some((msg) => msg._id === messageId);
