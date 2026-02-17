@@ -6,7 +6,7 @@ import { useAuthStore } from "../store/useAuthStore";
 
 const PairDeviceModal = ({ isOpen, onClose }) => {
     const [pairingCode, setPairingCode] = useState("");
-    const [isScanning, setIsScanning] = useState(false);
+    const [isScanning, setIsScanning] = useState(true);
     const { pairWeb } = useAuthStore();
 
     useEffect(() => {
@@ -63,9 +63,9 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                         <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-primary/10 rounded-xl">
-                                    <Monitor className="size-5 text-primary" />
+                                    <Camera className="size-5 text-primary" />
                                 </div>
-                                <h3 className="text-xl font-bold text-[#e9edef]">Link a Device</h3>
+                                <h3 className="text-xl font-bold text-[#e9edef]">Scan QR Code</h3>
                             </div>
                             <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
                                 <X className="size-5 text-zinc-400" />
@@ -75,12 +75,16 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                         <div className="p-8 space-y-6">
                             {isScanning ? (
                                 <div className="space-y-6">
-                                    <div id="reader" className="overflow-hidden rounded-2xl border-2 border-[#00a884] bg-black"></div>
+                                    <div className="flex flex-col items-center text-center space-y-2 mb-2">
+                                        <p className="text-[#e9edef] font-medium">Capture QR Code</p>
+                                        <p className="text-xs text-zinc-400">Point your camera at the QR code on your computer screen.</p>
+                                    </div>
+                                    <div id="reader" className="overflow-hidden rounded-2xl border-2 border-[#00a884] bg-black shadow-inner"></div>
                                     <button
                                         onClick={() => setIsScanning(false)}
-                                        className="w-full py-3 bg-white/5 text-zinc-400 rounded-xl hover:bg-white/10 transition-colors"
+                                        className="w-full py-3 text-sm text-[#00a884] hover:underline transition-all"
                                     >
-                                        Cancel Scan
+                                        Use pairing code instead
                                     </button>
                                 </div>
                             ) : (
@@ -90,44 +94,22 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                                             <QrCode className="size-12 text-primary" />
                                         </div>
                                         <div className="space-y-1">
-                                            <p className="text-[#e9edef] font-medium">Connect to PingMe Web</p>
-                                            <p className="text-sm text-zinc-400">Scan QR Code or enter the code manually.</p>
+                                            <p className="text-[#e9edef] font-medium">Enter Pairing Code</p>
+                                            <p className="text-sm text-zinc-400">Type the 8-character code shown on your screen.</p>
                                         </div>
-                                    </div>
-
-                                    <div className="flex gap-4">
-                                        <button
-                                            onClick={() => setIsScanning(true)}
-                                            className="flex-1 py-4 bg-[#00a884] text-[#111b21] rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#00a884]/20"
-                                        >
-                                            <Camera className="size-5" />
-                                            Scan QR Code
-                                        </button>
-                                    </div>
-
-                                    <div className="relative">
-                                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-                                        <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#1d232a] px-2 text-zinc-500">Or enter manually</span></div>
                                     </div>
 
                                     <form onSubmit={handlePair} className="space-y-4">
                                         <div className="form-control">
                                             <input
                                                 type="text"
-                                                placeholder="Enter Pairing Code (e.g. AB12CD34)"
+                                                placeholder="Enter Pairing Code"
                                                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-center text-xl font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                                                 value={pairingCode}
                                                 maxLength={8}
                                                 onChange={(e) => setPairingCode(e.target.value.toUpperCase())}
                                                 autoFocus
                                             />
-                                        </div>
-
-                                        <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3">
-                                            <ShieldCheck className="size-5 text-emerald-500 shrink-0 mt-0.5" />
-                                            <p className="text-xs text-emerald-500/80 leading-relaxed">
-                                                Linking a device allows you to send and receive messages on multiple browsers. Your existing chats will stay synced.
-                                            </p>
                                         </div>
 
                                         <button
@@ -137,9 +119,24 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                                         >
                                             Link This Device
                                         </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsScanning(true)}
+                                            className="w-full py-3 text-sm text-[#00a884] hover:underline transition-all"
+                                        >
+                                            Back to QR Scanner
+                                        </button>
                                     </form>
                                 </>
                             )}
+
+                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3 mt-4">
+                                <ShieldCheck className="size-5 text-emerald-500 shrink-0 mt-0.5" />
+                                <p className="text-xs text-emerald-500/80 leading-relaxed">
+                                    Linking a device allows you to stay synced across browsers. Your messages remain end-to-end encrypted.
+                                </p>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
