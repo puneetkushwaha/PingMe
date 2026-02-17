@@ -2,6 +2,7 @@ import { create } from "zustand";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
+import { encryptMessage, decryptMessage } from "../lib/encryption";
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -109,7 +110,13 @@ export const useChatStore = create((set, get) => ({
     try {
       const endpoint = isGroup ? `/groups/${id}` : `/messages/${id}`;
       const res = await axiosInstance.get(endpoint);
-      set({ messages: res.data });
+
+      // Decrypt messages
+      const messages = res.data.map(msg => ({
+        ...msg,
+        text: msg.isEncrypted ? decryptMessage(msg.text) : msg.text
+      }));
+      set({ messages });
 
       if (!isGroup) {
         set((state) => ({
@@ -128,8 +135,14 @@ export const useChatStore = create((set, get) => ({
     const { selectedUser, messages } = get();
     try {
       const endpoint = selectedUser.isGroup ? `/groups/send/${selectedUser._id}` : `/messages/send/${selectedUser._id}`;
-      const res = await axiosInstance.post(endpoint, messageData);
-      const newMessage = res.data;
+
+      const encryptedText = messageData.text ? encryptMessage(messageData.text) : messageData.text;
+      const payload = { ...messageData, text: encryptedText, isEncrypted: !!encryptedText };
+
+      const res = await axiosInstance.post(endpoint, payload);
+      // Optimistic update should use original text, but response will have encrypted.
+      // So we override the response text with our original for local display until simple refresh
+      const newMessage = { ...res.data, text: messageData.text };
 
       set({ messages: [...messages, newMessage] });
 
@@ -204,9 +217,15 @@ export const useChatStore = create((set, get) => ({
       const idToMatch = isGroupMessage ? newMessage.groupId : newMessage.senderId;
       const isMessageForSelectedChat = selectedUser && idToMatch === selectedUser._id;
 
+      // Decrypt incoming message immediately
+      const decryptedMessage = {
+        ...newMessage,
+        text: newMessage.isEncrypted ? decryptMessage(newMessage.text) : newMessage.text
+      };
+
       if (isMessageForSelectedChat) {
         set({
-          messages: [...get().messages, newMessage],
+          messages: [...get().messages, decryptedMessage],
         });
 
         if (!isGroupMessage) {
@@ -247,7 +266,7 @@ export const useChatStore = create((set, get) => ({
           const senderName = sender?.fullName || "Someone";
 
           new Notification(`New message from ${isGroupMessage ? "Group" : senderName}`, {
-            body: newMessage.text || "Sent a media file",
+            body: decryptedMessage.text || "Sent a media file",
             icon: "/icon-192x192.png"
           });
         }
@@ -265,7 +284,7 @@ export const useChatStore = create((set, get) => ({
           const userToMove = { ...updatedUsers[userIndex] };
 
           // Update last message text
-          userToMove.lastMessage = newMessage.text || (newMessage.image ? "📷 Image" : newMessage.audio ? "🎤 Audio" : "📁 File");
+          userToMove.lastMessage = decryptedMessage.text || (newMessage.image ? "📷 Image" : newMessage.audio ? "🎤 Audio" : "📁 File");
           userToMove.lastMessageTime = new Date().toISOString();
 
           // Remove from current position and add to top
