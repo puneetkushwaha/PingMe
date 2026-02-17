@@ -70,6 +70,21 @@ const App = () => {
     }
   }, [authUser]);
 
+  // Audio warm-up for ringtones
+  useEffect(() => {
+    const handleGesture = () => {
+      useCallStore.getState().warmUpAudio();
+      window.removeEventListener('click', handleGesture);
+      window.removeEventListener('touchstart', handleGesture);
+    };
+    window.addEventListener('click', handleGesture);
+    window.addEventListener('touchstart', handleGesture);
+    return () => {
+      window.removeEventListener('click', handleGesture);
+      window.removeEventListener('touchstart', handleGesture);
+    };
+  }, []);
+
   // FCM Token Registration
   useEffect(() => {
     if (authUser && 'Notification' in window) {

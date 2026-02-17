@@ -11,12 +11,39 @@ export const useCallStore = create((set, get) => ({
     isMuted: false,
     isVideoOff: false,
     ringtone: null,
+    audioContextWarmed: false,
     startTime: null,
 
+    warmUpAudio: () => {
+        if (get().audioContextWarmed) return;
+        const sound = new Audio("/notification.mp3");
+        sound.volume = 0;
+        sound.play().then(() => {
+            sound.pause();
+            set({ audioContextWarmed: true });
+            console.log("🔊 Audio warmed up successfully");
+        }).catch(() => {
+            console.log("🔇 Audio warm-up failed, user interaction required");
+        });
+    },
+
     playRingtone: () => {
-        const ringtone = new Audio("/notification.mp3"); // Using existing notification sound
+        const { ringtone: existingRingtone, call } = get();
+        if (existingRingtone) return;
+
+        const ringtone = new Audio("/notification.mp3");
         ringtone.loop = true;
-        ringtone.play().catch(err => console.error("Ringtone playback failed:", err));
+        ringtone.play().catch(err => {
+            console.warn("Ringtone autoplay blocked, showing notification fallback");
+            if (Notification.permission === "granted" && call) {
+                new Notification(`Incoming Call`, {
+                    body: `Incoming ${call.type} call. Click to answer.`,
+                    icon: "/icon-192x192.png",
+                    tag: 'incoming-call',
+                    requireInteraction: true
+                });
+            }
+        });
         set({ ringtone });
     },
 
