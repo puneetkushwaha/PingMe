@@ -3,10 +3,11 @@ import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCallStore } from "../store/useCallStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings, Download, Phone } from "lucide-react";
+import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings, Download, Phone, MonitorUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import NewGroupModal from "./NewGroupModal";
+import PairDeviceModal from "./PairDeviceModal";
 
 const Sidebar = () => {
   const { getUsers, users, getGroups, groups, selectedUser, setSelectedUser, isUsersLoading, isGroupsLoading, unreadCounts, typingUsers } = useChatStore();
@@ -14,6 +15,7 @@ const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all"); // 'all', 'unread', 'groups'
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [isPairModalOpen, setIsPairModalOpen] = useState(false);
 
   useEffect(() => {
     getUsers();
@@ -74,6 +76,13 @@ const Sidebar = () => {
                 >
                   <Settings className="size-4" />
                   Settings
+                </button>
+                <button
+                  onClick={() => setIsPairModalOpen(true)}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                >
+                  <MonitorUp className="size-4" />
+                  Link a device
                 </button>
                 <button
                   onClick={() => {
@@ -276,6 +285,7 @@ const Sidebar = () => {
       </div>
 
       <NewGroupModal isOpen={isGroupModalOpen} onClose={() => setIsGroupModalOpen(false)} />
+      <PairDeviceModal isOpen={isPairModalOpen} onClose={() => setIsPairModalOpen(false)} />
     </aside>
   );
 };
