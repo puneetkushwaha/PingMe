@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Image, Send, X, Smile, Plus, Mic, Trash2, File, FileText, MapPin, User, Camera } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
+import { motion, AnimatePresence } from "framer-motion";
 import ContactSelectorModal from "./ContactSelectorModal";
 
 const MessageInput = () => {
@@ -237,37 +238,44 @@ const MessageInput = () => {
       />
 
       {/* Previews Overlay */}
-      {(imagePreview || filePreview) && (
-        <div className="absolute bottom-full left-0 w-full p-3 bg-[#1a1a1a] border-t border-white/5 flex gap-2 overflow-x-auto z-50 animate-in slide-in-from-bottom duration-200">
-          {imagePreview && (
-            <div className="relative group shrink-0">
-              <img src={imagePreview} alt="Preview" className="size-14 object-cover rounded border border-white/10" />
-              <button
-                onClick={removeImage}
-                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-lg"
-              >
-                <X className="size-3" />
-              </button>
-            </div>
-          )}
-          {filePreview && (
-            <div className="bg-[#262626] p-1.5 rounded flex items-center gap-2 border border-white/10 relative min-w-[150px] shrink-0">
-              <div className="bg-[#00a884] p-1 rounded">
-                <FileText className="size-3.5 text-white" />
+      <AnimatePresence>
+        {(imagePreview || filePreview) && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute bottom-full left-0 w-full p-3 bg-[#1a1a1a] border-t border-white/5 flex gap-2 overflow-x-auto z-50"
+          >
+            {imagePreview && (
+              <div className="relative group shrink-0">
+                <img src={imagePreview} alt="Preview" className="size-14 object-cover rounded border border-white/10" />
+                <button
+                  onClick={removeImage}
+                  className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-lg"
+                >
+                  <X className="size-3" />
+                </button>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-medium text-white truncate">{fileName}</p>
+            )}
+            {filePreview && (
+              <div className="bg-[#262626] p-1.5 rounded flex items-center gap-2 border border-white/10 relative min-w-[150px] shrink-0">
+                <div className="bg-[#00a884] p-1 rounded">
+                  <FileText className="size-3.5 text-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-medium text-white truncate">{fileName}</p>
+                </div>
+                <button
+                  onClick={removeFile}
+                  className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5"
+                >
+                  <X className="size-3" />
+                </button>
               </div>
-              <button
-                onClick={removeFile}
-                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5"
-              >
-                <X className="size-3" />
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Recording UI Overlay */}
       {isRecording && (
@@ -389,24 +397,36 @@ const MessageInput = () => {
             <input type="file" className="hidden" ref={docInputRef} onChange={handleFileChange} />
 
             <div className="shrink-0 ml-0.5">
-              {text.trim() || imagePreview || filePreview || isRecording ? (
-                <button
-                  type="submit"
-                  disabled={isSending || isRecording}
-                  onClick={isRecording ? stopRecording : handleSendMessage}
-                  className="p-1 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
-                >
-                  <Send className="size-5.5" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={startRecording}
-                  className="p-1 text-[var(--wa-gray)] hover:text-white"
-                >
-                  <Mic className="size-5.5" />
-                </button>
-              )}
+              <AnimatePresence mode="wait">
+                {text.trim() || imagePreview || filePreview || isRecording ? (
+                  <motion.button
+                    key="send"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="submit"
+                    disabled={isSending || isRecording}
+                    onClick={isRecording ? stopRecording : handleSendMessage}
+                    className="p-1 text-[var(--wa-teal)] disabled:opacity-50"
+                  >
+                    <Send className="size-5.5" />
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    key="mic"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="button"
+                    onClick={startRecording}
+                    className="p-1 text-[var(--wa-gray)] hover:text-white"
+                  >
+                    <Mic className="size-5.5" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           </form>
         </div>

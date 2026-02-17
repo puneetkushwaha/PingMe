@@ -5,6 +5,7 @@ import { useCallStore } from "../store/useCallStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings, Download, Phone } from "lucide-react";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 import NewGroupModal from "./NewGroupModal";
 
 const Sidebar = () => {
@@ -125,7 +126,8 @@ const Sidebar = () => {
       {/* Filter Pills */}
       <div className="px-3 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
         {["All", "Unread", "Groups"].map((filter) => (
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             key={filter}
             onClick={() => setActiveFilter(filter.toLowerCase())}
             className={`px-3 py-1 rounded-lg text-xs font-bold transition-all
@@ -134,7 +136,7 @@ const Sidebar = () => {
                 : "bg-[#1a1a1a] text-[var(--wa-gray)] hover:text-white"}`}
           >
             {filter}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -199,64 +201,71 @@ const Sidebar = () => {
           )
         ) : (
           <>
-            {filteredItems.map((item) => (
-              <div
-                key={item._id}
-                onClick={() => setSelectedUser(item)}
-                className={`
+            <AnimatePresence initial={false}>
+              {filteredItems.map((item) => (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  key={item._id}
+                  onClick={() => setSelectedUser(item)}
+                  className={`
                   w-full p-3 flex items-center gap-3
                   hover:bg-white/5 transition-all cursor-pointer border-b border-white/5
                   ${selectedUser?._id === item._id ? "bg-[#1a1a1a]" : ""}
                 `}
-              >
-                <div className="relative shrink-0">
-                  <img
-                    src={item.profilePic || "/avatar.png"}
-                    alt={item.fullName || item.name}
-                    className="size-11 object-cover rounded-full"
-                  />
-                  {!item.isGroup && onlineUsers.includes(item._id) && (
-                    <span
-                      className="absolute bottom-0 right-0 size-3 bg-emerald-500 
-                      ring-2 ring-[#0a0a0a] rounded-full"
+                >
+                  <div className="relative shrink-0">
+                    <img
+                      src={item.profilePic || "/avatar.png"}
+                      alt={item.fullName || item.name}
+                      className="size-11 object-cover rounded-full"
                     />
-                  )}
-                </div>
-
-                {/* User/Group info */}
-                <div className="text-left min-w-0 flex-1 py-1">
-                  <div className="flex justify-between items-center">
-                    <div className={`font-bold truncate text-[15px] ${selectedUser?._id === item._id ? "text-[var(--wa-teal)]" : "text-[#e9edef]"}`}>
-                      {item.fullName || item.name}
-                    </div>
-                    <span className="text-[10px] text-[var(--wa-gray)]">
-                      {item.lastMessageTime ? new Date(item.lastMessageTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : ''}
-                    </span>
-                  </div>
-                  <div className="text-[12px] truncate flex items-center gap-1 text-[var(--wa-gray)]">
-                    {typingUsers.includes(item._id) ? (
-                      <span className="text-emerald-500">typing...</span>
-                    ) : (
-                      item.lastMessage || "No messages yet"
+                    {!item.isGroup && onlineUsers.includes(item._id) && (
+                      <span
+                        className="absolute bottom-0 right-0 size-3 bg-emerald-500 
+                      ring-2 ring-[#0a0a0a] rounded-full"
+                      />
                     )}
                   </div>
-                </div>
 
-                {/* Unread Badge */}
-                <div className="flex flex-col items-end justify-center min-w-[30px] gap-2 absolute right-4 top-1/2 -translate-y-1/2 h-full py-3">
-                  <div className="flex flex-col items-end gap-2 h-full justify-between pb-1">
-                    <div className="h-4"></div> {/* Spacer for time position */}
-                    <div className="flex items-center gap-2">
-                      {!item.isGroup && unreadCounts[item._id] > 0 && (
-                        <span className="bg-[#00a884] text-[#111b21] text-[11px] font-bold rounded-full size-5 flex items-center justify-center shadow-lg">
-                          {unreadCounts[item._id]}
-                        </span>
+                  {/* User/Group info */}
+                  <div className="text-left min-w-0 flex-1 py-1">
+                    <div className="flex justify-between items-center">
+                      <div className={`font-bold truncate text-[15px] ${selectedUser?._id === item._id ? "text-[var(--wa-teal)]" : "text-[#e9edef]"}`}>
+                        {item.fullName || item.name}
+                      </div>
+                      <span className="text-[10px] text-[var(--wa-gray)]">
+                        {item.lastMessageTime ? new Date(item.lastMessageTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : ''}
+                      </span>
+                    </div>
+                    <div className="text-[12px] truncate flex items-center gap-1 text-[var(--wa-gray)]">
+                      {typingUsers.includes(item._id) ? (
+                        <span className="text-emerald-500">typing...</span>
+                      ) : (
+                        item.lastMessage || "No messages yet"
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
+
+                  {/* Unread Badge */}
+                  <div className="flex flex-col items-end justify-center min-w-[30px] gap-2 absolute right-4 top-1/2 -translate-y-1/2 h-full py-3">
+                    <div className="flex flex-col items-end gap-2 h-full justify-between pb-1">
+                      <div className="h-4"></div> {/* Spacer for time position */}
+                      <div className="flex items-center gap-2">
+                        {!item.isGroup && unreadCounts[item._id] > 0 && (
+                          <span className="bg-[#00a884] text-[#111b21] text-[11px] font-bold rounded-full size-5 flex items-center justify-center shadow-lg">
+                            {unreadCounts[item._id]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
             {filteredItems.length === 0 && (
               <div className="text-center text-zinc-500 py-4">No {activeFilter === 'groups' ? 'groups' : 'users'} found</div>

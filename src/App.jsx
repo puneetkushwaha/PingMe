@@ -13,7 +13,8 @@ import { useThemeStore } from "./store/useThemeStore";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import toast from "react-hot-toast"; // Added toast function
+import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useCallStore } from "./store/useCallStore";
 import CallModal from "./components/CallModal";
@@ -132,13 +133,24 @@ const App = () => {
     <div data-theme={theme}>
       {/* <Navbar /> */}
 
-      <Routes>
-        <Route path="/" element={authUser ? <HomePage onlineUsers={onlineUsers} /> : <Navigate to="/login" />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={window.location.pathname}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="h-full w-full"
+        >
+          <Routes location={window.location} key={window.location.pathname}>
+            <Route path="/" element={authUser ? <HomePage onlineUsers={onlineUsers} /> : <Navigate to="/login" />} />
+            <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+            <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+            <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
+            <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
 
       <CallModal />
       <Toaster />
