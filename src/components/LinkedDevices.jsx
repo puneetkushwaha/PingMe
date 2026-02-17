@@ -11,7 +11,7 @@ const LinkedDevices = () => {
     }, [getLinkedDevices]);
 
     const getDeviceIcon = (deviceName) => {
-        const name = deviceName.toLowerCase();
+        const name = (deviceName || "unknown device").toLowerCase();
         if (name.includes("windows") || name.includes("linux") || name.includes("mac")) return <Laptop className="size-5" />;
         if (name.includes("android") || name.includes("iphone")) return <Smartphone className="size-5" />;
         return <Monitor className="size-5" />;
@@ -49,10 +49,14 @@ const LinkedDevices = () => {
                             </div>
 
                             <div className="flex-1 min-w-0">
-                                <h5 className="text-[#e9edef] font-medium truncate">{device.deviceName}</h5>
+                                <h5 className="text-[#e9edef] font-medium truncate">{device.deviceName || "Unknown Device"}</h5>
                                 <div className="flex items-center gap-2 text-xs text-zinc-500">
                                     <Clock className="size-3" />
-                                    <span>Last active: {formatDistanceToNow(new Date(device.lastActiveAt), { addSuffix: true })}</span>
+                                    <span>
+                                        {device.lastActiveAt
+                                            ? `Last active: ${formatDistanceToNow(new Date(device.lastActiveAt), { addSuffix: true })}`
+                                            : "Active status unknown"}
+                                    </span>
                                 </div>
                             </div>
 
