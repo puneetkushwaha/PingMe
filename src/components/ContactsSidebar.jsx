@@ -13,7 +13,8 @@ const ContactsSidebar = () => {
     }, [getUsers]);
 
     const filteredUsers = users.filter((user) =>
-        user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+        user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.phone && user.phone.includes(searchQuery))
     );
 
     const handleSelectUser = (user) => {
@@ -40,7 +41,7 @@ const ContactsSidebar = () => {
                     <Search className="size-4 text-[var(--wa-gray)] pl-1" />
                     <input
                         type="text"
-                        placeholder="Search contacts"
+                        placeholder="Search by name or phone number"
                         className="bg-transparent border-none outline-none text-[#e9edef] text-sm w-full placeholder-[var(--wa-gray)] ml-2 focus:ring-0"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -54,7 +55,10 @@ const ContactsSidebar = () => {
                     <>
                         <h4 className="text-[#00a884] text-sm font-medium uppercase px-6 py-4">Search Results</h4>
                         {filteredUsers.length === 0 ? (
-                            <div className="text-center text-[var(--wa-gray)] py-10">No users found for "{searchQuery}"</div>
+                            <div className="text-center text-[var(--wa-gray)] py-10 px-6">
+                                <p>No users found for "{searchQuery}"</p>
+                                <p className="text-xs mt-2">Try searching for a name or the exact phone number.</p>
+                            </div>
                         ) : (
                             filteredUsers.map((user) => (
                                 <div
@@ -74,7 +78,9 @@ const ContactsSidebar = () => {
                                     </div>
                                     <div className="text-left border-b border-zinc-800 flex-1 pb-3">
                                         <div className="font-medium text-[#e9edef] text-[16px]">{user.fullName}</div>
-                                        <div className="text-[13px] text-[var(--wa-gray)] truncate">PingMe user</div>
+                                        <div className="text-[13px] text-[var(--wa-gray)] truncate">
+                                            {user.phone ? user.phone : "PingMe user"}
+                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -87,7 +93,7 @@ const ContactsSidebar = () => {
                         </div>
                         <h3 className="text-[#e9edef] text-lg font-medium mb-2">Search for Users</h3>
                         <p className="text-[var(--wa-gray)] text-sm">
-                            Type a name to find people on PingMe and start chatting.
+                            Type a name or phone number to find people on PingMe and start chatting.
                         </p>
                     </div>
                 )}

@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Image, Send, X, Smile, Plus, Mic, Trash2, File, FileText } from "lucide-react";
+import { Image, Send, X, Smile, Plus, Mic, Trash2, File, FileText, MapPin, User, Camera } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
+import ContactSelectorModal from "./ContactSelectorModal";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -15,18 +16,65 @@ const MessageInput = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
   const docInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
   const { sendMessage, selectedUser, blockUser, clearMessages } = useChatStore();
   const { authUser } = useAuthStore();
 
   const isBlocked = authUser?.blockedUsers?.includes(selectedUser?._id);
+
+  const handleShareLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsAttachmentMenuOpen(false);
+    toast.loading("Fetching location...", { id: "location-fetch" });
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          await sendMessage({
+            location: { lat: latitude, lng: longitude }
+          });
+          toast.success("Location shared!", { id: "location-fetch" });
+        } catch (error) {
+          toast.error("Failed to share location", { id: "location-fetch" });
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast.error("Please allow location access", { id: "location-fetch" });
+      },
+      { enableHighAccuracy: true }
+    );
+  };
+
+  const handleContactSelect = async (contact) => {
+    try {
+      await sendMessage({
+        contact: {
+          fullName: contact.fullName,
+          phone: contact.phone || "N/A",
+          profilePic: contact.profilePic,
+          userId: contact._id
+        }
+      });
+      toast.success(`Contact ${contact.fullName} shared!`);
+    } catch (error) {
+      toast.error("Failed to share contact");
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -63,6 +111,7 @@ const MessageInput = () => {
   const removeImage = () => {
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   const startRecording = async () => {
@@ -170,6 +219,7 @@ const MessageInput = () => {
       setFileName("");
       if (fileInputRef.current) fileInputRef.current.value = "";
       if (docInputRef.current) docInputRef.current.value = "";
+      if (cameraInputRef.current) cameraInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
     } finally {
@@ -179,6 +229,13 @@ const MessageInput = () => {
 
   return (
     <div className="p-3 bg-[#0a0a0a] border-t border-white/5 relative shrink-0">
+      {/* Contact Selector */}
+      <ContactSelectorModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        onSelect={handleContactSelect}
+      />
+
       {/* Previews Overlay */}
       {(imagePreview || filePreview) && (
         <div className="absolute bottom-full left-0 w-full p-4 bg-[#1a1a1a] border-t border-white/5 flex gap-4 overflow-x-auto z-50 animate-in slide-in-from-bottom duration-200">
@@ -268,18 +325,51 @@ const MessageInput = () => {
             </button>
 
             {isAttachmentMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-2 w-40 bg-[#1a1a1a] rounded shadow-xl border border-white/5 z-50 overflow-hidden">
+              <div className="absolute bottom-full left-0 mb-4 w-48 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
+                <button
+                  onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                >
+                  <div className="bg-pink-500/20 p-2 rounded-lg">
+                    <Camera className="size-4 text-pink-500" />
+                  </div>
+                  Camera
+                </button>
                 <button
                   onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <Image className="size-4 text-blue-500" /> Gallery
+                  <div className="bg-blue-500/20 p-2 rounded-lg">
+                    <Image className="size-4 text-blue-500" />
+                  </div>
+                  Gallery
                 </button>
                 <button
                   onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <File className="size-4 text-indigo-500" /> Document
+                  <div className="bg-indigo-500/20 p-2 rounded-lg">
+                    <File className="size-4 text-indigo-500" />
+                  </div>
+                  Document
+                </button>
+                <button
+                  onClick={handleShareLocation}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                >
+                  <div className="bg-emerald-500/20 p-2 rounded-lg">
+                    <MapPin className="size-4 text-emerald-500" />
+                  </div>
+                  Location
+                </button>
+                <button
+                  onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
+                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                >
+                  <div className="bg-amber-500/20 p-2 rounded-lg">
+                    <User className="size-4 text-amber-500" />
+                  </div>
+                  Contact
                 </button>
               </div>
             )}
@@ -295,6 +385,7 @@ const MessageInput = () => {
             />
 
             <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
+            <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleImageChange} />
             <input type="file" className="hidden" ref={docInputRef} onChange={handleFileChange} />
 
             <div className="shrink-0">

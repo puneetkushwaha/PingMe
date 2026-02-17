@@ -5,7 +5,7 @@ import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
-import { Check, CheckCheck, FileText, Smile } from "lucide-react";
+import { Check, CheckCheck, FileText, Smile, MapPin } from "lucide-react";
 
 const ChatContainer = () => {
   const {
@@ -122,6 +122,44 @@ const ChatContainer = () => {
                         <audio controls className="h-7 w-full" src={message.audio} />
                       </div>
                     )}
+                    {message.type === "location" && message.location && (
+                      <div
+                        className="flex flex-col gap-2 bg-[#202c33] rounded-lg overflow-hidden border border-white/5 cursor-pointer hover:bg-[#2a3942] transition-all min-w-[200px]"
+                        onClick={() => window.open(`https://www.google.com/maps?q=${message.location.lat},${message.location.lng}`, "_blank")}
+                      >
+                        <div className="h-32 bg-[#0b141a] relative flex items-center justify-center">
+                          <MapPin className="size-10 text-red-500" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#202c33] to-transparent opacity-50" />
+                        </div>
+                        <div className="p-3 flex flex-col gap-1">
+                          <span className="text-[14px] font-bold text-[var(--wa-teal)]">Live Location</span>
+                          <span className="text-[12px] text-zinc-400">Click to view on Google Maps</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {message.type === "contact" && message.contact && (
+                      <div className="flex flex-col gap-3 bg-[#202c33] p-3 rounded-lg border border-white/5 min-w-[220px]">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={message.contact.profilePic || "/avatar.png"}
+                            className="size-12 rounded-full border border-white/10 object-cover"
+                            alt=""
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[#e9edef] font-bold text-[15px] truncate">{message.contact.fullName}</p>
+                            <p className="text-[12px] text-zinc-400 truncate">{message.contact.phone}</p>
+                          </div>
+                        </div>
+                        <button
+                          className="w-full py-2 bg-white/5 rounded text-[13px] font-bold text-[var(--wa-teal)] hover:bg-white/10 transition-colors border-t border-white/5"
+                          onClick={() => toast.success(`Contact ${message.contact.fullName} added (Simulated)`)}
+                        >
+                          Message
+                        </button>
+                      </div>
+                    )}
+
                     {message.text && (
                       <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words">
                         {message.text}
