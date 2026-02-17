@@ -6,55 +6,11 @@ import { useAuthStore } from "../store/useAuthStore";
 
 const PairDeviceModal = ({ isOpen, onClose }) => {
     const [pairingCode, setPairingCode] = useState("");
-    const [isScanning, setIsScanning] = useState(true);
     const { pairWeb } = useAuthStore();
-    const qrReaderRef = useRef(null);
-    const scannerRef = useRef(null);
-
-    useEffect(() => {
-        if (isOpen && isScanning) {
-            const startScanner = async () => {
-                try {
-                    // Create instance if doesn't exist
-                    if (!scannerRef.current) {
-                        scannerRef.current = new Html5Qrcode("reader");
-                    }
-
-                    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-                    // Use environment-facing camera
-                    await scannerRef.current.start(
-                        { facingMode: "environment" },
-                        config,
-                        async (decodedText) => {
-                            setPairingCode(decodedText);
-                            setIsScanning(false);
-                            await pairWeb(decodedText);
-                            onClose();
-                        },
-                        (errorMessage) => {
-                            // Suppress errors during scanning
-                        }
-                    );
-                } catch (err) {
-                    console.error("Scanner start failed", err);
-                }
-            };
-
-            // Short delay to ensure DOM element is ready
-            const timer = setTimeout(startScanner, 100);
-            return () => {
-                clearTimeout(timer);
-                if (scannerRef.current && scannerRef.current.isScanning) {
-                    scannerRef.current.stop().catch(e => console.error(e));
-                }
-            };
-        }
-    }, [isOpen, isScanning, pairWeb, onClose]);
 
     const handlePair = async (e) => {
         if (e) e.preventDefault();
-        if (pairingCode.length < 4) return;
+        if (pairingCode.length < 6) return;
         await pairWeb(pairingCode);
         onClose();
         setPairingCode("");
@@ -79,79 +35,56 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                     >
                         <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-primary/10 rounded-xl">
-                                    <Camera className="size-5 text-primary" />
+                                <div className="p-2 bg-[#00a884]/10 rounded-xl">
+                                    <Monitor className="size-5 text-[#00a884]" />
                                 </div>
-                                <h3 className="text-xl font-bold text-[#e9edef]">Scan QR Code</h3>
+                                <h3 className="text-xl font-bold text-[#e9edef]">Link a Device</h3>
                             </div>
                             <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
                                 <X className="size-5 text-zinc-400" />
                             </button>
                         </div>
 
-                        <div className="p-8 space-y-6">
-                            {isScanning ? (
-                                <div className="space-y-6">
-                                    <div className="flex flex-col items-center text-center space-y-2 mb-2">
-                                        <p className="text-[#e9edef] font-medium">Capture QR Code</p>
-                                        <p className="text-xs text-zinc-400">Point your camera at the QR code on your computer screen.</p>
-                                    </div>
-                                    <div id="reader" className="overflow-hidden rounded-2xl border-2 border-[#00a884] bg-black shadow-inner"></div>
-                                    <button
-                                        onClick={() => setIsScanning(false)}
-                                        className="w-full py-3 text-sm text-[#00a884] hover:underline transition-all"
-                                    >
-                                        Use pairing code instead
-                                    </button>
+                        <div className="p-8 space-y-8">
+                            <div className="flex flex-col items-center text-center space-y-4">
+                                <div className="p-4 bg-[#00a884]/5 rounded-full ring-8 ring-[#00a884]/5">
+                                    <Smartphone className="size-12 text-[#00a884]" />
                                 </div>
-                            ) : (
-                                <>
-                                    <div className="flex flex-col items-center text-center space-y-4">
-                                        <div className="p-4 bg-primary/5 rounded-full ring-8 ring-primary/5">
-                                            <QrCode className="size-12 text-primary" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[#e9edef] font-medium">Enter Pairing Code</p>
-                                            <p className="text-sm text-zinc-400">Type the 8-character code shown on your screen.</p>
-                                        </div>
-                                    </div>
+                                <div className="space-y-2">
+                                    <p className="text-[#e9edef] text-lg font-medium">Enter Pairing Code</p>
+                                    <p className="text-sm text-zinc-400 leading-relaxed px-4">
+                                        Type the 6-digit code shown on your computer screen to link this device.
+                                    </p>
+                                </div>
+                            </div>
 
-                                    <form onSubmit={handlePair} className="space-y-4">
-                                        <div className="form-control">
-                                            <input
-                                                type="text"
-                                                placeholder="Enter Pairing Code"
-                                                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-center text-xl font-mono tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-                                                value={pairingCode}
-                                                maxLength={8}
-                                                onChange={(e) => setPairingCode(e.target.value.toUpperCase())}
-                                                autoFocus
-                                            />
-                                        </div>
+                            <form onSubmit={handlePair} className="space-y-6">
+                                <div className="flex justify-center gap-2">
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="000000"
+                                        className="w-full max-w-[240px] bg-black/20 border border-white/10 rounded-2xl px-4 py-4 text-center text-3xl font-mono font-bold tracking-[0.5em] text-[#00a884] focus:outline-none focus:ring-2 focus:ring-[#00a884]/50 transition-all placeholder:opacity-20"
+                                        value={pairingCode}
+                                        maxLength={6}
+                                        onChange={(e) => setPairingCode(e.target.value.replace(/\D/g, ""))}
+                                        autoFocus
+                                    />
+                                </div>
 
-                                        <button
-                                            type="submit"
-                                            disabled={pairingCode.length < 8}
-                                            className="w-full py-4 bg-primary text-primary-content rounded-xl font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary/20"
-                                        >
-                                            Link This Device
-                                        </button>
+                                <button
+                                    type="submit"
+                                    disabled={pairingCode.length < 6}
+                                    className="w-full py-4 bg-[#00a884] text-[#111b21] rounded-2xl font-bold hover:brightness-110 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#00a884]/10 active:scale-[0.98]"
+                                >
+                                    Confirm Linking
+                                </button>
+                            </form>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsScanning(true)}
-                                            className="w-full py-3 text-sm text-[#00a884] hover:underline transition-all"
-                                        >
-                                            Back to QR Scanner
-                                        </button>
-                                    </form>
-                                </>
-                            )}
-
-                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3 mt-4">
-                                <ShieldCheck className="size-5 text-emerald-500 shrink-0 mt-0.5" />
-                                <p className="text-xs text-emerald-500/80 leading-relaxed">
-                                    Linking a device allows you to stay synced across browsers. Your messages remain end-to-end encrypted.
+                            <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3">
+                                <ShieldCheck className="size-4 text-emerald-500 shrink-0 mt-0.5" />
+                                <p className="text-xs text-emerald-500/70 leading-relaxed">
+                                    Your personal messages are end-to-end encrypted on all your linked devices.
                                 </p>
                             </div>
                         </div>
