@@ -306,13 +306,13 @@ const MessageInput = () => {
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-0.5 max-w-full mx-auto overflow-hidden">
+        <div className="flex items-center gap-0 max-w-full mx-auto overflow-hidden">
           <button
             type="button"
             className={`p-1 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
-            <Smile className="size-6" />
+            <Smile className="size-5.5" />
           </button>
 
           <div className="relative shrink-0">
@@ -321,11 +321,11 @@ const MessageInput = () => {
               onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
               className={`p-1 hover:bg-white/5 rounded-full transition-all ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             >
-              <Plus className={`size-7 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
+              <Plus className={`size-6.5 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
             </button>
 
             {isAttachmentMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-4 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
+              <div className="absolute bottom-full left-0 mb-3 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
                 <button
                   onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
                   className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
@@ -379,7 +379,7 @@ const MessageInput = () => {
             <input
               type="text"
               placeholder="Type a message"
-              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-2.5 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
+              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-1.5 px-2.5 text-[#e9edef] text-[14px] placeholder-[var(--wa-gray)] min-w-0"
               value={text}
               onChange={handleTextChange}
             />
@@ -388,7 +388,7 @@ const MessageInput = () => {
             <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleImageChange} />
             <input type="file" className="hidden" ref={docInputRef} onChange={handleFileChange} />
 
-            <div className="shrink-0">
+            <div className="shrink-0 ml-0.5">
               {text.trim() || imagePreview || filePreview || isRecording ? (
                 <button
                   type="submit"
@@ -396,7 +396,7 @@ const MessageInput = () => {
                   onClick={isRecording ? stopRecording : handleSendMessage}
                   className="p-1 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
                 >
-                  <Send className="size-6" />
+                  <Send className="size-5.5" />
                 </button>
               ) : (
                 <button
@@ -404,7 +404,7 @@ const MessageInput = () => {
                   onClick={startRecording}
                   className="p-1 text-[var(--wa-gray)] hover:text-white"
                 >
-                  <Mic className="size-6" />
+                  <Mic className="size-5.5" />
                 </button>
               )}
             </div>

@@ -28,9 +28,9 @@ const ChatHeader = () => {
   const isOnline = onlineUsers.includes(selectedUser._id);
 
   return (
-    <div className="px-1 py-1.5 sm:px-2 sm:py-2.5 bg-[#0a0a0a] border-b border-white/5 sticky top-0 z-30 w-full overflow-hidden">
+    <div className="px-1 py-1 sm:px-2 sm:py-2 bg-[#0a0a0a] border-b border-white/5 sticky top-0 z-30 w-full overflow-hidden">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-1 overflow-hidden flex-1 min-w-0">
+        <div className="flex items-center gap-0.5 overflow-hidden flex-1 min-w-0">
           {/* Back Button */}
           <button
             onClick={() => setSelectedUser(null)}
@@ -42,7 +42,7 @@ const ChatHeader = () => {
           {/* User Info Click Area */}
           <div
             onClick={() => setIsContactInfoOpen(true)}
-            className="flex items-center gap-1.5 p-0.5 hover:bg-white/5 rounded-lg cursor-pointer transition-all min-w-0 flex-1 overflow-hidden"
+            className="flex items-center gap-1 p-0.5 hover:bg-white/5 rounded-lg cursor-pointer transition-all min-w-0 flex-1 overflow-hidden"
           >
             <div className="relative shrink-0">
               <img
@@ -55,17 +55,17 @@ const ChatHeader = () => {
               )}
             </div>
 
-            <div className="flex-1 min-w-0 overflow-hidden">
-              <h3 className="font-bold text-[#e9edef] text-[13.5px] sm:text-[16px] truncate">
+            <div className="min-w-0 overflow-hidden flex-1">
+              <h3 className="font-bold text-[#e9edef] text-[13px] sm:text-[16px] truncate leading-tight">
                 {selectedUser.fullName || selectedUser.name}
               </h3>
-              <p className="text-[10px] sm:text-[12px] text-[var(--wa-gray)] truncate">
+              <p className="text-[9px] sm:text-[11px] text-[var(--wa-gray)] truncate leading-tight">
                 {isTyping ? (
-                  <span className="text-emerald-500 italic text-[10px]">typing...</span>
+                  <span className="text-emerald-500 italic">typing...</span>
                 ) : selectedUser.isGroup ? (
                   "Group Chat"
                 ) : isOnline ? (
-                  <span className="text-emerald-500 font-bold uppercase text-[9px]">Online</span>
+                  <span className="text-emerald-500 font-bold uppercase text-[8px]">Online</span>
                 ) : (
                   <>Last seen {formatLastSeen(selectedUser.lastSeen)}</>
                 )}
@@ -75,14 +75,14 @@ const ChatHeader = () => {
         </div>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-0 relative shrink-0">
+        <div className="flex items-center gap-0 relative shrink-0 ml-1">
           {isSearchOpen && (
-            <div className="absolute right-full mr-1 flex items-center bg-[#1a1a1a] rounded-lg px-2 h-8 w-28 sm:w-56 border border-white/5 shadow-xl z-50">
+            <div className="absolute right-full mr-1 flex items-center bg-[#1a1a1a] rounded-lg px-1.5 h-7 w-24 sm:w-56 border border-white/5 shadow-xl z-50">
               <input
                 autoFocus
                 type="text"
                 placeholder="Search..."
-                className="bg-transparent border-none outline-none text-white text-[11px] w-full"
+                className="bg-transparent border-none outline-none text-white text-[10px] w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -100,20 +100,20 @@ const ChatHeader = () => {
             onClick={() => setIsSearchOpen(true)}
             className={`p-1 rounded-full hover:bg-white/5 ${isSearchOpen ? 'text-[var(--wa-teal)]' : 'text-[var(--wa-gray)]'}`}
           >
-            <Search className="size-4.5" />
+            <Search className="size-4" />
           </button>
 
           <button
             onClick={() => initiateCall(selectedUser._id, "audio")}
             className="p-1 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
           >
-            <Phone className="size-4.5" />
+            <Phone className="size-4" />
           </button>
           <button
             onClick={() => initiateCall(selectedUser._id, "video")}
             className="p-1 text-[var(--wa-gray)] hover:bg-white/5 hover:text-white rounded-full transition-all"
           >
-            <Video className="size-5" />
+            <Video className="size-4.5" />
           </button>
         </div>
       </div>
