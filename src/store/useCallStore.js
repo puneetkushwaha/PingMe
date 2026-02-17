@@ -10,6 +10,24 @@ export const useCallStore = create((set, get) => ({
     peerConnection: null,
     isMuted: false,
     isVideoOff: false,
+    ringtone: null,
+    startTime: null,
+
+    playRingtone: () => {
+        const ringtone = new Audio("/notification.mp3"); // Using existing notification sound
+        ringtone.loop = true;
+        ringtone.play().catch(err => console.error("Ringtone playback failed:", err));
+        set({ ringtone });
+    },
+
+    stopRingtone: () => {
+        const { ringtone } = get();
+        if (ringtone) {
+            ringtone.pause();
+            ringtone.currentTime = 0;
+            set({ ringtone: null });
+        }
+    },
 
     toggleMic: () => {
         const { localStream, isMuted } = get();
@@ -114,14 +132,17 @@ export const useCallStore = create((set, get) => ({
             console.error("Error initiating call:", error);
             toast.error("Could not access camera/microphone");
             set({ call: null, localStream: null });
+            get().stopRingtone();
         }
     },
 
     handleIncomingCall: async (data) => {
         set({ call: { ...data, status: 'incoming' } });
+        get().playRingtone();
     },
 
     acceptCall: async () => {
+        get().stopRingtone();
         const { call } = get();
         const socket = useAuthStore.getState().socket;
         if (!socket || !call) return;
@@ -178,7 +199,7 @@ export const useCallStore = create((set, get) => ({
             await pc.setLocalDescription(ans);
 
             socket.emit("call:accepted", { to: call.from, ans });
-            set({ peerConnection: pc, call: { ...call, status: 'connected' } });
+            set({ peerConnection: pc, call: { ...call, status: 'connected' }, startTime: Date.now() });
 
         } catch (error) {
             console.error("Error accepting call:", error);
@@ -191,7 +212,7 @@ export const useCallStore = create((set, get) => ({
         const { peerConnection, call } = get();
         if (peerConnection) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(ans));
-            set({ call: { ...call, status: 'connected' } });
+            set({ call: { ...call, status: 'connected' }, startTime: Date.now() });
         }
     },
 
@@ -203,8 +224,47 @@ export const useCallStore = create((set, get) => ({
     },
 
     endCall: () => {
-        const { localStream, peerConnection, call } = get();
+        get().stopRingtone();
+        const { localStream, peerConnection, call, startTime } = get();
         const socket = useAuthStore.getState().socket;
+
+        if (call) {
+            // Calculate duration if status was 'connected'
+            let duration = 0;
+            let status = 'completed';
+
+            if (call.status === 'connected' && startTime) {
+                duration = Math.round((Date.now() - startTime) / 1000);
+            } else if (call.status === 'calling') {
+                status = 'missed';
+            } else if (call.status === 'incoming') {
+                status = 'rejected';
+            }
+
+            // Only caller logs the call to prevent duplicates
+            // OR if it's a missed/rejected call, the relevant party logs it
+            // For now, let's have the person who ENDS the call log it if it was connected
+            // If it wasn't connected, only the caller logs 'missed' if they cancel, 
+            // and receiver logs 'rejected' if they reject.
+
+            const isCaller = !!call.to;
+            const receiverId = call.to || call.from;
+
+            if (isCaller && receiverId) {
+                get().logCall({
+                    receiverId,
+                    type: call.type,
+                    status,
+                    duration
+                });
+            }
+
+            if (call.status === 'incoming') {
+                socket.emit("call:rejected", { to: receiverId });
+            } else {
+                socket.emit("call:ended", { to: receiverId });
+            }
+        }
 
         if (localStream) {
             localStream.getTracks().forEach(track => track.stop());
@@ -213,11 +273,7 @@ export const useCallStore = create((set, get) => ({
             peerConnection.close();
         }
 
-        if (call) {
-            socket.emit("call:ended", { to: call.to });
-        }
-
-        set({ call: null, localStream: null, remoteStream: null, peerConnection: null, isIncomingCall: false });
+        set({ call: null, localStream: null, remoteStream: null, peerConnection: null, startTime: null });
     },
 
     subscribeToCalls: () => {
@@ -233,6 +289,8 @@ export const useCallStore = create((set, get) => ({
         });
 
         socket.on("call:rejected", () => {
+            const { call } = get();
+            if (call) set({ call: { ...call, status: 'rejected' } });
             toast.error("Call rejected");
             get().endCall();
         });

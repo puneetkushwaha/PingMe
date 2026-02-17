@@ -5,7 +5,8 @@ import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
-import { Check, CheckCheck, FileText, Smile, MapPin } from "lucide-react";
+import { useCallStore } from "../store/useCallStore";
+import { Check, CheckCheck, FileText, Smile, MapPin, Phone, Video, PhoneMissed, PhoneForwarded, PhoneIncoming } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ChatContainer = () => {
@@ -163,6 +164,39 @@ const ChatContainer = () => {
                             onClick={() => toast.success(`Contact ${message.contact.fullName} added (Simulated)`)}
                           >
                             Message
+                          </button>
+                        </div>
+                      )}
+
+                      {message.type === "call" && message.callDetails && (
+                        <div className="flex items-center gap-3 bg-black/20 p-3 rounded-lg border border-white/5 min-w-[200px]">
+                          <div className={`p-2 rounded-full ${message.callDetails.status === 'missed' ? 'bg-red-500/20' : 'bg-emerald-500/20'}`}>
+                            {message.callDetails.status === 'missed' ? (
+                              <PhoneMissed className="size-5 text-red-500" />
+                            ) : (
+                              message.senderId === authUser._id ? (
+                                <PhoneForwarded className="size-5 text-emerald-500" />
+                              ) : (
+                                <PhoneIncoming className="size-5 text-emerald-500" />
+                              )
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-[#e9edef] font-bold text-sm">
+                              {message.callDetails.status === 'missed' ? 'Missed call' :
+                                (message.callDetails.type === 'video' ? 'Video call' : 'Voice call')}
+                            </p>
+                            <p className="text-[12px] text-zinc-400">
+                              {message.callDetails.status === 'completed' && message.callDetails.duration
+                                ? `${Math.floor(message.callDetails.duration / 60)}m ${message.callDetails.duration % 60}s`
+                                : message.callDetails.status === 'missed' ? 'No answer' : 'Declined'}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => useCallStore.getState().initiateCall(message.senderId === authUser._id ? message.receiverId : message.senderId, message.callDetails.type)}
+                            className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                          >
+                            {message.callDetails.type === 'video' ? <Video className="size-4 text-[var(--wa-teal)]" /> : <Phone className="size-4 text-[var(--wa-teal)]" />}
                           </button>
                         </div>
                       )}
