@@ -228,7 +228,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-2 bg-[#0a0a0a] border-t border-white/5 relative shrink-0">
+    <div className="p-1 bg-[#0a0a0a] border-t border-white/5 relative shrink-0">
       {/* Contact Selector */}
       <ContactSelectorModal
         isOpen={isContactModalOpen}
@@ -238,10 +238,10 @@ const MessageInput = () => {
 
       {/* Previews Overlay */}
       {(imagePreview || filePreview) && (
-        <div className="absolute bottom-full left-0 w-full p-4 bg-[#1a1a1a] border-t border-white/5 flex gap-4 overflow-x-auto z-50 animate-in slide-in-from-bottom duration-200">
+        <div className="absolute bottom-full left-0 w-full p-3 bg-[#1a1a1a] border-t border-white/5 flex gap-2 overflow-x-auto z-50 animate-in slide-in-from-bottom duration-200">
           {imagePreview && (
             <div className="relative group shrink-0">
-              <img src={imagePreview} alt="Preview" className="size-16 object-cover rounded border border-white/10" />
+              <img src={imagePreview} alt="Preview" className="size-14 object-cover rounded border border-white/10" />
               <button
                 onClick={removeImage}
                 className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-lg"
@@ -251,12 +251,12 @@ const MessageInput = () => {
             </div>
           )}
           {filePreview && (
-            <div className="bg-[#262626] p-2 rounded flex items-center gap-3 border border-white/10 relative min-w-[180px] shrink-0">
-              <div className="bg-[#00a884] p-1.5 rounded">
-                <FileText className="size-4 text-white" />
+            <div className="bg-[#262626] p-1.5 rounded flex items-center gap-2 border border-white/10 relative min-w-[150px] shrink-0">
+              <div className="bg-[#00a884] p-1 rounded">
+                <FileText className="size-3.5 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-white truncate">{fileName}</p>
+                <p className="text-[10px] font-medium text-white truncate">{fileName}</p>
               </div>
               <button
                 onClick={removeFile}
@@ -271,9 +271,9 @@ const MessageInput = () => {
 
       {/* Recording UI Overlay */}
       {isRecording && (
-        <div className="absolute inset-0 bg-[#0a0a0a] flex items-center gap-2 px-2 z-50">
+        <div className="absolute inset-0 bg-[#0a0a0a] flex items-center gap-1 px-1.5 z-50">
           <div className="flex-1 flex items-center gap-1.5 bg-[#1a1a1a] p-1.5 rounded-full border border-white/5 min-w-0">
-            <Mic className="size-3.5 text-red-500 animate-pulse ml-1 shrink-0" />
+            <Mic className="size-3.5 text-red-500 animate-pulse ml-0.5 shrink-0" />
             <span className="text-white font-mono text-xs tabular-nums shrink-0">{formatTime(recordingDuration)}</span>
             <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden mx-1 min-w-0">
               <div className="bg-red-500 h-full animate-pulse" style={{ width: '100%' }} />
@@ -281,14 +281,14 @@ const MessageInput = () => {
           </div>
           <button
             onClick={stopRecording}
-            className="bg-[#00a884] text-white p-2 hover:bg-[#00b894] rounded-full transition-all active:scale-95 shrink-0"
+            className="bg-[#00a884] text-white p-1.5 hover:bg-[#00b894] rounded-full transition-all active:scale-95 shrink-0"
             title="Send"
           >
             <Send className="size-4" />
           </button>
           <button
             onClick={cancelRecording}
-            className="text-red-500 p-1.5 hover:bg-white/5 rounded-full shrink-0"
+            className="text-red-500 p-1 hover:bg-white/5 rounded-full shrink-0"
             title="Cancel"
           >
             <Trash2 className="size-4" />
@@ -298,76 +298,76 @@ const MessageInput = () => {
 
       {/* Restricted View for Blocked Users */}
       {isBlocked ? (
-        <div className="bg-[#1a1a1a] p-3 rounded text-center border border-white/5 max-w-2xl mx-auto">
-          <p className="text-[var(--wa-gray)] mb-2 text-xs">You blocked this contact.</p>
+        <div className="bg-[#1a1a1a] p-2 rounded text-center border border-white/5 max-w-2xl mx-auto">
+          <p className="text-[var(--wa-gray)] mb-1 text-[10px]">You blocked this contact.</p>
           <div className="flex justify-center gap-4">
-            <button onClick={() => blockUser(selectedUser._id)} className="text-[var(--wa-teal)] text-sm font-bold">Unblock</button>
-            <button onClick={() => clearMessages(selectedUser._id)} className="text-red-500 text-sm font-bold">Delete Chat</button>
+            <button onClick={() => blockUser(selectedUser._id)} className="text-[var(--wa-teal)] text-xs font-bold">Unblock</button>
+            <button onClick={() => clearMessages(selectedUser._id)} className="text-red-500 text-xs font-bold">Delete Chat</button>
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-1 max-w-full mx-auto">
+        <div className="flex items-center gap-0.5 max-w-full mx-auto overflow-hidden">
           <button
             type="button"
-            className={`p-1.5 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+            className={`p-1 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             <Smile className="size-6" />
           </button>
 
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               type="button"
               onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
-              className={`p-1.5 hover:bg-white/5 rounded-full transition-all shrink-0 ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+              className={`p-1 hover:bg-white/5 rounded-full transition-all ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             >
               <Plus className={`size-7 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
             </button>
 
             {isAttachmentMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-4 w-48 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
+              <div className="absolute bottom-full left-0 mb-4 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
                 <button
                   onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <div className="bg-pink-500/20 p-2 rounded-lg">
-                    <Camera className="size-4 text-pink-500" />
+                  <div className="bg-pink-500/20 p-1.5 rounded-lg">
+                    <Camera className="size-3.5 text-pink-500" />
                   </div>
                   Camera
                 </button>
                 <button
                   onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <div className="bg-blue-500/20 p-2 rounded-lg">
-                    <Image className="size-4 text-blue-500" />
+                  <div className="bg-blue-500/20 p-1.5 rounded-lg">
+                    <Image className="size-3.5 text-blue-500" />
                   </div>
                   Gallery
                 </button>
                 <button
                   onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <div className="bg-indigo-500/20 p-2 rounded-lg">
-                    <File className="size-4 text-indigo-500" />
+                  <div className="bg-indigo-500/20 p-1.5 rounded-lg">
+                    <File className="size-3.5 text-indigo-500" />
                   </div>
                   Document
                 </button>
                 <button
                   onClick={handleShareLocation}
-                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <div className="bg-emerald-500/20 p-2 rounded-lg">
-                    <MapPin className="size-4 text-emerald-500" />
+                  <div className="bg-emerald-500/20 p-1.5 rounded-lg">
+                    <MapPin className="size-3.5 text-emerald-500" />
                   </div>
                   Location
                 </button>
                 <button
                   onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                 >
-                  <div className="bg-amber-500/20 p-2 rounded-lg">
-                    <User className="size-4 text-amber-500" />
+                  <div className="bg-amber-500/20 p-1.5 rounded-lg">
+                    <User className="size-3.5 text-amber-500" />
                   </div>
                   Contact
                 </button>
@@ -375,11 +375,11 @@ const MessageInput = () => {
             )}
           </div>
 
-          <form onSubmit={handleSendMessage} className="flex-1 flex gap-1 items-center min-w-0">
+          <form onSubmit={handleSendMessage} className="flex-1 flex gap-0.5 items-center min-w-0">
             <input
               type="text"
               placeholder="Type a message"
-              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-3 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
+              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-2.5 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
               value={text}
               onChange={handleTextChange}
             />
@@ -394,7 +394,7 @@ const MessageInput = () => {
                   type="submit"
                   disabled={isSending || isRecording}
                   onClick={isRecording ? stopRecording : handleSendMessage}
-                  className="p-1.5 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
+                  className="p-1 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
                 >
                   <Send className="size-6" />
                 </button>
@@ -402,7 +402,7 @@ const MessageInput = () => {
                 <button
                   type="button"
                   onClick={startRecording}
-                  className="p-1.5 text-[var(--wa-gray)] hover:text-white"
+                  className="p-1 text-[var(--wa-gray)] hover:text-white"
                 >
                   <Mic className="size-6" />
                 </button>
