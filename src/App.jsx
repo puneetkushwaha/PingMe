@@ -20,14 +20,15 @@ import CallModal from "./components/CallModal";
 
 import { messaging, getToken, onMessage, VAPID_KEY } from "./lib/firebase"; // Added FCM imports
 import { axiosInstance } from "./lib/axios"; // Added axiosInstance
+import { useChatStore } from "./store/useChatStore"; // Added useChatStore
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
   const { subscribeToCalls, unsubscribeFromCalls } = useCallStore();
+  const { subscribeToMessages, unsubscribeFromMessages } = useChatStore(); // Added subscribeToMessages
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
-  console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
@@ -36,9 +37,13 @@ const App = () => {
   useEffect(() => {
     if (authUser) {
       subscribeToCalls();
-      return () => unsubscribeFromCalls();
+      subscribeToMessages(); // Added subscribeToMessages
+      return () => {
+        unsubscribeFromCalls();
+        unsubscribeFromMessages(); // Added unsubscribeFromMessages
+      };
     }
-  }, [authUser, subscribeToCalls, unsubscribeFromCalls]);
+  }, [authUser, subscribeToCalls, unsubscribeFromCalls, subscribeToMessages, unsubscribeFromMessages]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -115,7 +120,6 @@ const App = () => {
     }
   }, [authUser]);
 
-  console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (

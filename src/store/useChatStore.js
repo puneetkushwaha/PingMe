@@ -222,10 +222,17 @@ export const useChatStore = create((set, get) => ({
         toast.success(`New message from ${isGroupMessage ? "Group" : senderName}`);
       }
 
-      const sound = new Audio("/notification.mp3");
+      // Pre-load sound for performance (re-using the same object)
+      if (!get().notiSound) {
+        set({ notiSound: new Audio("/notification.mp3") });
+      }
+      const sound = get().notiSound;
 
       if (!document.hasFocus() || !isMessageForSelectedChat) {
-        sound.play().catch(err => console.log("Audio play failed:", err)); // User interaction requirement
+        sound.currentTime = 0; // Reset to start
+        sound.play().catch(err => {
+          // Ignore play errors (usually user interaction requirement)
+        });
 
         if (!isMessageForSelectedChat && Notification.permission === "granted") {
           // Find sender name for notification
