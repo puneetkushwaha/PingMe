@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useChatStore } from "../store/useChatStore";
-import { useAuthStore } from "../store/useAuthStore";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, UserPlus } from "lucide-react";
+import SaveContactModal from "./SaveContactModal";
 
 const ContactsSidebar = () => {
     const { getUsers, users, setSelectedUser } = useChatStore();
     const { setActiveSidebar, onlineUsers } = useAuthStore();
     const [searchQuery, setSearchQuery] = useState("");
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
     useEffect(() => {
         getUsers();
@@ -23,7 +22,9 @@ const ContactsSidebar = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col h-full">
+        <div className="flex-1 flex flex-col h-full bg-[#111b21]">
+            <SaveContactModal isOpen={isSaveModalOpen} onClose={() => setIsSaveModalOpen(false)} />
+
             {/* Header */}
             <div className="p-4 bg-[var(--wa-sidebar-bg)] h-[108px] flex flex-col justify-end shrink-0 gap-4">
                 <div className="flex items-center gap-6">
@@ -36,7 +37,7 @@ const ContactsSidebar = () => {
             </div>
 
             {/* Search */}
-            <div className="px-3 py-2 bg-[var(--wa-sidebar-bg)]">
+            <div className="px-3 py-2 bg-[var(--wa-sidebar-bg)] flex flex-col gap-2">
                 <div className="flex items-center gap-2 bg-[var(--wa-header-bg)] rounded-lg px-2 py-1.5 h-[35px]">
                     <Search className="size-4 text-[var(--wa-gray)] pl-1" />
                     <input
@@ -47,6 +48,16 @@ const ContactsSidebar = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
+
+                <button
+                    onClick={() => setIsSaveModalOpen(true)}
+                    className="flex items-center gap-4 px-3 py-3 hover:bg-[#202c33] transition-colors text-[var(--wa-teal)] group"
+                >
+                    <div className="size-10 bg-[var(--wa-teal)] rounded-full flex items-center justify-center text-[#111b21]">
+                        <UserPlus className="size-5" />
+                    </div>
+                    <span className="font-medium text-sm text-[#e9edef]">New Contact (Save by Number)</span>
+                </button>
             </div>
 
             {/* User List */}
