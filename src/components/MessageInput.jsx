@@ -228,7 +228,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-3 bg-[#0a0a0a] border-t border-white/5 relative shrink-0">
+    <div className="p-2 bg-[#0a0a0a] border-t border-white/5 relative shrink-0">
       {/* Contact Selector */}
       <ContactSelectorModal
         isOpen={isContactModalOpen}
@@ -272,8 +272,8 @@ const MessageInput = () => {
       {/* Recording UI Overlay */}
       {isRecording && (
         <div className="absolute inset-0 bg-[#0a0a0a] flex items-center gap-2 px-2 z-50">
-          <div className="flex-1 flex items-center gap-2 bg-[#1a1a1a] p-1.5 rounded-full border border-white/5 min-w-0">
-            <Mic className="size-3.5 text-red-500 animate-pulse ml-1.5 shrink-0" />
+          <div className="flex-1 flex items-center gap-1.5 bg-[#1a1a1a] p-1.5 rounded-full border border-white/5 min-w-0">
+            <Mic className="size-3.5 text-red-500 animate-pulse ml-1 shrink-0" />
             <span className="text-white font-mono text-xs tabular-nums shrink-0">{formatTime(recordingDuration)}</span>
             <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden mx-1 min-w-0">
               <div className="bg-red-500 h-full animate-pulse" style={{ width: '100%' }} />
@@ -306,10 +306,10 @@ const MessageInput = () => {
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 max-w-full mx-auto">
+        <div className="flex items-center gap-1 max-w-full mx-auto">
           <button
             type="button"
-            className={`p-2 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+            className={`p-1.5 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
             <Smile className="size-6" />
@@ -319,7 +319,7 @@ const MessageInput = () => {
             <button
               type="button"
               onClick={() => setIsAttachmentMenuOpen(!isAttachmentMenuOpen)}
-              className={`p-2 hover:bg-white/5 rounded-full transition-all shrink-0 ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+              className={`p-1.5 hover:bg-white/5 rounded-full transition-all shrink-0 ${isAttachmentMenuOpen ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
             >
               <Plus className={`size-7 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
             </button>
@@ -375,11 +375,11 @@ const MessageInput = () => {
             )}
           </div>
 
-          <form onSubmit={handleSendMessage} className="flex-1 flex gap-2 items-center min-w-0">
+          <form onSubmit={handleSendMessage} className="flex-1 flex gap-1 items-center min-w-0">
             <input
               type="text"
               placeholder="Type a message"
-              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-4 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
+              className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-2 px-3 text-[#e9edef] text-[15px] placeholder-[var(--wa-gray)] min-w-0"
               value={text}
               onChange={handleTextChange}
             />
@@ -394,7 +394,7 @@ const MessageInput = () => {
                   type="submit"
                   disabled={isSending || isRecording}
                   onClick={isRecording ? stopRecording : handleSendMessage}
-                  className="p-2 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
+                  className="p-1.5 text-[var(--wa-teal)] hover:scale-105 active:scale-95 disabled:opacity-50"
                 >
                   <Send className="size-6" />
                 </button>
@@ -402,7 +402,7 @@ const MessageInput = () => {
                 <button
                   type="button"
                   onClick={startRecording}
-                  className="p-2 text-[var(--wa-gray)] hover:text-white"
+                  className="p-1.5 text-[var(--wa-gray)] hover:text-white"
                 >
                   <Mic className="size-6" />
                 </button>
