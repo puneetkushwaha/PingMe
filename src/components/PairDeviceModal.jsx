@@ -1,4 +1,4 @@
-import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw } from "lucide-react";
+import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Html5Qrcode } from "html5-qrcode";
 import { useState, useEffect, useRef } from "react";
