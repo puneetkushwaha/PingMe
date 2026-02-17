@@ -19,14 +19,15 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log('[firebase-messaging-sw.js] Received background message:', payload);
 
+    const isCall = payload.data?.type === 'call';
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
         icon: '/icon-192x192.png',
         badge: '/icon-192x192.png',
-        tag: 'pingme-notification',
-        requireInteraction: false,
-        vibrate: [200, 100, 200], // Vibration pattern
+        tag: isCall ? 'pingme-call' : 'pingme-notification',
+        requireInteraction: isCall, // Essential for calls
+        vibrate: [200, 100, 200, 100, 200, 100, 200], // Longer vibration for calls
         silent: false, // Enable sound
         sound: '/noti.wav', // Custom notification sound
         data: payload.data
@@ -43,9 +44,9 @@ self.addEventListener('notificationclick', (event) => {
 
     // Open the app and navigate to the chat
     const chatId = event.notification.data?.chatId;
-    const urlToOpen = chatId
-        ? `${self.location.origin}/?chat=${chatId}`
-        : self.location.origin;
+    const urlToOpen = isCall
+        ? `${self.location.origin}/?type=call&from=${payload.data?.chatId}`
+        : (chatId ? `${self.location.origin}/?chat=${chatId}` : self.location.origin);
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true })

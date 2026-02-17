@@ -138,6 +138,15 @@ const App = () => {
 
 
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  useEffect(() => {
+    if (authUser && searchParams.get('type') === 'call') {
+      const from = searchParams.get('from');
+      toast(`Incoming call from a linked device... waiting for connection`, { icon: '📞' });
+      // The socket will eventually sync the call status if the caller is still active
+    }
+  }, [authUser, location.search]);
 
   if (isCheckingAuth && !authUser)
     return (

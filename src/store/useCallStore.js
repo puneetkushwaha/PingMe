@@ -16,7 +16,7 @@ export const useCallStore = create((set, get) => ({
 
     warmUpAudio: () => {
         if (get().audioContextWarmed) return;
-        const sound = new Audio("/notification.mp3");
+        const sound = new Audio("/noti.wav");
         sound.volume = 0;
         sound.play().then(() => {
             sound.pause();
@@ -31,8 +31,15 @@ export const useCallStore = create((set, get) => ({
         const { ringtone: existingRingtone, call } = get();
         if (existingRingtone) return;
 
-        const ringtone = new Audio("/notification.mp3");
+        const ringtone = new Audio("/noti.wav");
         ringtone.loop = true;
+        // Some browsers need explicit loop handling
+        ringtone.onended = () => {
+            if (get().call?.status === 'incoming') {
+                ringtone.currentTime = 0;
+                ringtone.play();
+            }
+        };
         ringtone.play().catch(err => {
             console.warn("Ringtone autoplay blocked, showing notification fallback");
             if (Notification.permission === "granted" && call) {
