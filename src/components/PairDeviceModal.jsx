@@ -1,38 +1,55 @@
 import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import { useState, useEffect } from "react";
+import { Html5Qrcode } from "html5-qrcode";
+import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 
 const PairDeviceModal = ({ isOpen, onClose }) => {
     const [pairingCode, setPairingCode] = useState("");
     const [isScanning, setIsScanning] = useState(true);
     const { pairWeb } = useAuthStore();
+    const qrReaderRef = useRef(null);
+    const scannerRef = useRef(null);
 
     useEffect(() => {
-        let scanner = null;
         if (isOpen && isScanning) {
-            scanner = new Html5QrcodeScanner("reader", {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
-            });
+            const startScanner = async () => {
+                try {
+                    // Create instance if doesn't exist
+                    if (!scannerRef.current) {
+                        scannerRef.current = new Html5Qrcode("reader");
+                    }
 
-            scanner.render(async (decodedText) => {
-                setPairingCode(decodedText);
-                setIsScanning(false);
-                await pairWeb(decodedText);
-                onClose();
-            }, (error) => {
-                // Ignore scanner errors
-            });
+                    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+                    // Use environment-facing camera
+                    await scannerRef.current.start(
+                        { facingMode: "environment" },
+                        config,
+                        async (decodedText) => {
+                            setPairingCode(decodedText);
+                            setIsScanning(false);
+                            await pairWeb(decodedText);
+                            onClose();
+                        },
+                        (errorMessage) => {
+                            // Suppress errors during scanning
+                        }
+                    );
+                } catch (err) {
+                    console.error("Scanner start failed", err);
+                }
+            };
+
+            // Short delay to ensure DOM element is ready
+            const timer = setTimeout(startScanner, 100);
+            return () => {
+                clearTimeout(timer);
+                if (scannerRef.current && scannerRef.current.isScanning) {
+                    scannerRef.current.stop().catch(e => console.error(e));
+                }
+            };
         }
-
-        return () => {
-            if (scanner) {
-                scanner.clear().catch(err => console.error("Failed to clear scanner", err));
-            }
-        };
     }, [isOpen, isScanning, pairWeb, onClose]);
 
     const handlePair = async (e) => {
