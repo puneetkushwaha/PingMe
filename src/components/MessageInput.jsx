@@ -314,7 +314,7 @@ const MessageInput = () => {
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-0 max-w-full mx-auto overflow-hidden">
+        <div className="flex items-center gap-0 max-w-full mx-auto">
           <button
             type="button"
             className={`p-1 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
@@ -332,55 +332,63 @@ const MessageInput = () => {
               <Plus className={`size-6.5 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`} />
             </button>
 
-            {isAttachmentMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-3 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-50 overflow-hidden py-1 animate-in slide-in-from-bottom-2">
-                <button
-                  onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+            <AnimatePresence>
+              {isAttachmentMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-full left-0 mb-3 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-[60] overflow-hidden py-1"
                 >
-                  <div className="bg-pink-500/20 p-1.5 rounded-lg">
-                    <Camera className="size-3.5 text-pink-500" />
-                  </div>
-                  Camera
-                </button>
-                <button
-                  onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                >
-                  <div className="bg-blue-500/20 p-1.5 rounded-lg">
-                    <Image className="size-3.5 text-blue-500" />
-                  </div>
-                  Gallery
-                </button>
-                <button
-                  onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                >
-                  <div className="bg-indigo-500/20 p-1.5 rounded-lg">
-                    <File className="size-3.5 text-indigo-500" />
-                  </div>
-                  Document
-                </button>
-                <button
-                  onClick={handleShareLocation}
-                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                >
-                  <div className="bg-emerald-500/20 p-1.5 rounded-lg">
-                    <MapPin className="size-3.5 text-emerald-500" />
-                  </div>
-                  Location
-                </button>
-                <button
-                  onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
-                  className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                >
-                  <div className="bg-amber-500/20 p-1.5 rounded-lg">
-                    <User className="size-3.5 text-amber-500" />
-                  </div>
-                  Contact
-                </button>
-              </div>
-            )}
+                  <button
+                    onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="bg-pink-500/20 p-1.5 rounded-lg">
+                      <Camera className="size-3.5 text-pink-500" />
+                    </div>
+                    Camera
+                  </button>
+                  <button
+                    onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="bg-blue-500/20 p-1.5 rounded-lg">
+                      <Image className="size-3.5 text-blue-500" />
+                    </div>
+                    Gallery
+                  </button>
+                  <button
+                    onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="bg-indigo-500/20 p-1.5 rounded-lg">
+                      <File className="size-3.5 text-indigo-500" />
+                    </div>
+                    Document
+                  </button>
+                  <button
+                    onClick={handleShareLocation}
+                    className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="bg-emerald-500/20 p-1.5 rounded-lg">
+                      <MapPin className="size-3.5 text-emerald-500" />
+                    </div>
+                    Location
+                  </button>
+                  <button
+                    onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
+                    className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                  >
+                    <div className="bg-amber-500/20 p-1.5 rounded-lg">
+                      <User className="size-3.5 text-amber-500" />
+                    </div>
+                    Contact
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <form onSubmit={handleSendMessage} className="flex-1 flex gap-0.5 items-center min-w-0">

@@ -6,7 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -122,6 +122,8 @@ const App = () => {
   }, [authUser]);
 
 
+  const location = useLocation();
+
   if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen">
@@ -135,14 +137,14 @@ const App = () => {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={window.location.pathname}
+          key={location.pathname}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="h-full w-full"
         >
-          <Routes location={window.location} key={window.location.pathname}>
+          <Routes location={location} key={location.pathname}>
             <Route path="/" element={authUser ? <HomePage onlineUsers={onlineUsers} /> : <Navigate to="/login" />} />
             <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
             <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />

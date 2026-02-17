@@ -150,8 +150,9 @@ const Sidebar = () => {
             </div>
           ) : (
             calls.map((call) => {
-              const withUser = call.callerId._id === authUser._id ? call.receiverId : call.callerId;
-              const isOutgoing = call.callerId._id === authUser._id;
+              const withUser = call?.callerId?._id === authUser?._id ? call?.receiverId : call?.callerId;
+              const isOutgoing = call?.callerId?._id === authUser?._id;
+              if (!withUser || typeof withUser === 'string') return null;
 
               return (
                 <div
@@ -161,13 +162,13 @@ const Sidebar = () => {
                   <div className="relative shrink-0">
                     <img
                       src={withUser.profilePic || "/avatar.png"}
-                      alt={withUser.fullName}
+                      alt={withUser.fullName || "User"}
                       className="size-12 object-cover rounded-full border border-white/10"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center mb-0.5">
-                      <h3 className="font-bold text-[#e9edef] truncate">{withUser.fullName}</h3>
+                      <h3 className="font-bold text-[#e9edef] truncate">{withUser.fullName || "Unknown"}</h3>
                       <span className="text-[10px] text-[var(--wa-gray)]">
                         {new Date(call.startedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                       </span>

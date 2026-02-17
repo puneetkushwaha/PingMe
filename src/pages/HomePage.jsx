@@ -159,16 +159,16 @@ const HomePage = () => {
                     <div className="text-[var(--wa-gray)] text-center py-10 text-sm italic">No call history</div>
                   ) : (
                     calls.map((call) => {
-                      const isIncoming = call.receiverId._id === authUser._id;
-                      const otherUser = isIncoming ? call.callerId : call.receiverId;
-                      if (!otherUser) return null;
+                      const isIncoming = call?.receiverId?._id === authUser?._id;
+                      const otherUser = isIncoming ? call?.callerId : call?.receiverId;
+                      if (!otherUser || typeof otherUser === 'string') return null;
 
                       return (
                         <div key={call._id} className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg transition-colors group">
                           <img src={otherUser.profilePic || "/avatar.png"} className="size-12 rounded-full object-cover" alt="" />
                           <div className="flex-1 border-b border-zinc-800 pb-3 group-last:border-none flex items-center justify-between">
                             <div>
-                              <h3 className={`font-medium ${call.status === 'missed' ? 'text-red-500' : 'text-[#e9edef]'}`}>{otherUser.fullName}</h3>
+                              <h3 className={`font-medium ${call.status === 'missed' ? 'text-red-500' : 'text-[#e9edef]'}`}>{otherUser.fullName || "Unknown"}</h3>
                               <div className="flex items-center gap-1 text-xs text-[var(--wa-gray)]">
                                 {isIncoming ? (
                                   call.status === 'missed' ? <Phone className="size-3 text-red-500 rotate-[135deg]" /> : <Phone className="size-3 text-green-500 rotate-[135deg]" />
