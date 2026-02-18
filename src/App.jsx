@@ -73,15 +73,20 @@ const App = () => {
   // Audio warm-up for ringtones
   useEffect(() => {
     const handleGesture = () => {
-      useCallStore.getState().warmUpAudio();
-      window.removeEventListener('click', handleGesture);
-      window.removeEventListener('touchstart', handleGesture);
+      const { warmUpAudio, audioContextWarmed } = useCallStore.getState();
+      if (!audioContextWarmed) {
+        warmUpAudio();
+      }
     };
+
     window.addEventListener('click', handleGesture);
     window.addEventListener('touchstart', handleGesture);
+    window.addEventListener('keydown', handleGesture); // Add keyboard support
+
     return () => {
       window.removeEventListener('click', handleGesture);
       window.removeEventListener('touchstart', handleGesture);
+      window.removeEventListener('keydown', handleGesture);
     };
   }, []);
 
