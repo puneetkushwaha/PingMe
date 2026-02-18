@@ -1,8 +1,9 @@
-import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw, Smartphone, List } from "lucide-react";
+import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw, Smartphone, List, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import LinkedDevices from "./LinkedDevices";
+import toast from "react-hot-toast";
 
 const PairDeviceModal = ({ isOpen, onClose }) => {
     const [pairingCode, setPairingCode] = useState("");
@@ -15,6 +16,16 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
         await pairWeb(pairingCode);
         setActiveTab("devices");
         setPairingCode("");
+    };
+
+    const [copied, setCopied] = useState(false);
+    const WEB_URL = "https://ping-me-web-chi.vercel.app/";
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(WEB_URL);
+        setCopied(true);
+        toast.success("Link copied to clipboard!");
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
@@ -78,6 +89,20 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                                                 <p className="text-sm text-zinc-400 leading-relaxed px-4">
                                                     Enter the 6-digit code shown on your desktop to authorize the link.
                                                 </p>
+                                                <div className="flex flex-col items-center gap-2 pt-2">
+                                                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Open on your computer</p>
+                                                    <button
+                                                        onClick={copyToClipboard}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all group"
+                                                    >
+                                                        <span className="text-xs text-[#e9edef] font-medium">{WEB_URL}</span>
+                                                        {copied ? (
+                                                            <Check className="size-3 text-[#00a884]" />
+                                                        ) : (
+                                                            <Copy className="size-3 text-zinc-500 group-hover:text-[#00a884]" />
+                                                        )}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 
