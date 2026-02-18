@@ -73,7 +73,8 @@ const HomePage = () => {
         {/* Sidebar Sections */}
         <div className={`h-full w-full lg:w-[400px] shrink-0 border-r border-[var(--wa-header-bg)] ${selectedUser ? 'hidden lg:flex' : 'flex'} flex-col bg-[var(--wa-sidebar-bg)] pb-16 lg:pb-0`}>
 
-          {activeSidebar === "chats" && <Sidebar />}
+
+          {(activeSidebar === "chats" || activeSidebar === "calls") && <Sidebar />}
 
           {activeSidebar === "contacts" && <ContactsSidebar />}
 
@@ -145,54 +146,6 @@ const HomePage = () => {
             </div>
           )}
 
-          {activeSidebar === "calls" && (
-            <div className="flex-1 flex flex-col">
-              <div className="p-4 bg-[var(--wa-sidebar-bg)] h-16 flex items-center justify-between shrink-0">
-                <h1 className="text-[#e9edef] text-[22px] font-bold">Calls</h1>
-                <Phone className="size-5 text-[var(--wa-gray)] cursor-pointer hover:text-white" onClick={() => toast("Select contact to call")} />
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="space-y-4">
-                  <h4 className="text-[#00a884] text-sm font-medium uppercase px-2">Recent Calls</h4>
-                  {calls.length === 0 ? (
-                    <div className="text-[var(--wa-gray)] text-center py-10 text-sm italic">No call history</div>
-                  ) : (
-                    calls.map((call) => {
-                      const isIncoming = call?.receiverId?._id === authUser?._id;
-                      const otherUser = isIncoming ? call?.callerId : call?.receiverId;
-                      if (!otherUser || typeof otherUser === 'string') return null;
-
-                      return (
-                        <div key={call._id} className="flex items-center gap-4 p-2 hover:bg-white/5 rounded-lg transition-colors group">
-                          <img src={otherUser.profilePic || "/avatar.png"} className="size-12 rounded-full object-cover" alt="" />
-                          <div className="flex-1 border-b border-zinc-800 pb-3 group-last:border-none flex items-center justify-between">
-                            <div>
-                              <h3 className={`font-medium ${call.status === 'missed' ? 'text-red-500' : 'text-[#e9edef]'}`}>{otherUser.fullName || "Unknown"}</h3>
-                              <div className="flex items-center gap-1 text-xs text-[var(--wa-gray)]">
-                                {isIncoming ? (
-                                  call.status === 'missed' ? <Phone className="size-3 text-red-500 rotate-[135deg]" /> : <Phone className="size-3 text-green-500 rotate-[135deg]" />
-                                ) : (
-                                  <Phone className="size-3 text-green-500 rotate-45" />
-                                )}
-                                <span>
-                                  {new Date(call.startedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}, {new Date(call.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex gap-4">
-                              <button onClick={() => initiateCall(otherUser._id, 'audio')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Phone className="size-5" /></button>
-                              <button onClick={() => initiateCall(otherUser._id, 'video')} className="p-2 text-[#00a884] hover:bg-[#00a884]/10 rounded-full transition-colors"><Video className="size-5" /></button>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {activeSidebar === "invite" && <InviteSidebar />}
 

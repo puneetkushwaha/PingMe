@@ -172,6 +172,7 @@ export const useAuthStore = create((set, get) => ({
     try {
       await axiosInstance.post("/auth/pair-device", { pairingCode });
       toast.success("Web device linked!");
+      get().getLinkedDevices(); // Refresh list immediately
     } catch (error) {
       toast.error(error.response?.data?.message || "Pairing failed");
     }

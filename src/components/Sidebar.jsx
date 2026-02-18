@@ -53,12 +53,21 @@ const Sidebar = () => {
 
       {/* Minimalist Sidebar Header */}
       <div className="h-16 px-4 flex items-center justify-between shrink-0 sticky top-0 z-20 bg-[#0a0a0a]">
-        <h1 className="text-[#e9edef] text-[22px] font-bold">Chats</h1>
+        <h1 className="text-[#e9edef] text-[22px] font-bold">
+          {activeSidebar === "calls" ? "Calls" : "Chats"}
+        </h1>
         <div className="flex items-center gap-4 text-[var(--wa-gray)]">
-          <MessageSquarePlus
-            className="size-5 cursor-pointer hover:text-white transition-colors"
-            onClick={() => setActiveSidebar("contacts")}
-          />
+          {activeSidebar === "calls" ? (
+            <Phone
+              className="size-5 cursor-pointer hover:text-white transition-colors"
+              onClick={() => toast("Select contact to call")}
+            />
+          ) : (
+            <MessageSquarePlus
+              className="size-5 cursor-pointer hover:text-white transition-colors"
+              onClick={() => setActiveSidebar("contacts")}
+            />
+          )}
           <div className="relative group">
             <EllipsisVertical className="size-5 cursor-pointer hover:text-white transition-colors" />
             <div className="absolute right-0 top-10 w-48 bg-[#233138] rounded-lg shadow-2xl border border-white/5 hidden group-hover:block z-50 overflow-hidden">
