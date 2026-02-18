@@ -14,8 +14,8 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
-              <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center overflow-hidden">
-                <img src="/logo.png" className="w-full h-full object-cover" alt="PingMe" />
+              <div className="size-9 rounded-full bg-white flex items-center justify-center overflow-hidden p-1">
+                <img src="/logo.png" className="w-full h-full object-contain" alt="PingMe" />
               </div>
               <h1 className="text-lg font-bold">PingMe</h1>
             </Link>
