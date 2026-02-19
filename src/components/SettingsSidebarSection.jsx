@@ -2,16 +2,25 @@ import { useState } from "react";
 import {
     ArrowLeft, Moon, Bell, Shield, HelpCircle, LogOut, ChevronRight,
     Key, CircleUser, Languages, Database, Accessibility, Info,
-    Smartphone, Volume2, Image as ImageIcon, Download
+    Smartphone, Volume2, Image as ImageIcon, Download, Edit2, Check
 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
 import toast from "react-hot-toast";
 
 const SettingsSidebarSection = ({ onBack }) => {
-    const { logout, authUser } = useAuthStore();
+    const { logout, authUser, updateProfile, isCompiling } = useAuthStore();
     const { theme, setTheme, wallpaper, setWallpaper } = useThemeStore();
     const [activeSection, setActiveSection] = useState("main");
+
+    // Local state for editing
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [fullName, setFullName] = useState(authUser?.fullName || "");
+    const [isEditingAbout, setIsEditingAbout] = useState(false);
+    const [about, setAbout] = useState(authUser?.about || "Hey there! I am using PingMe.");
+    const [isEditingPhone, setIsEditingPhone] = useState(false);
+    const [phone, setPhone] = useState(authUser?.phone || "");
+    const [selectedImg, setSelectedImg] = useState(null);
 
     const WALLPAPERS = [
         { id: "obsidian", name: "Default Obsidian", url: "https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png" },
@@ -74,35 +83,166 @@ const SettingsSidebarSection = ({ onBack }) => {
         </div>
     );
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = async () => {
+            const base64Image = reader.result;
+            setSelectedImg(base64Image);
+            await updateProfile({ profilePic: base64Image });
+        };
+    };
+
+    const handleUpdateName = async () => {
+        if (fullName.trim() && fullName !== authUser.fullName) {
+            await updateProfile({ fullName });
+        }
+        setIsEditingName(false);
+    };
+
+    const handleUpdateAbout = async () => {
+        if (about.trim() && about !== authUser.about) {
+            await updateProfile({ about });
+        }
+        setIsEditingAbout(false);
+    };
+
+    const handleUpdatePhone = async () => {
+        if (phone.trim() && phone !== authUser.phone) {
+            await updateProfile({ phone });
+        }
+        setIsEditingPhone(false);
+    };
+
     const renderAccount = () => (
         <SubSectionLayout title="Account" onBack={() => setActiveSection("main")}>
-            <div className="p-4 space-y-6">
-                <div className="space-y-4">
-                    <h3 className="text-[#00a884] text-sm font-medium ml-2">Security</h3>
-                    <div className="bg-white/5 rounded-xl overflow-hidden ring-1 ring-white/5">
-                        <div className="p-4 flex items-center justify-between border-b border-white/5">
-                            <div>
-                                <p className="text-[#e9edef]">Security notifications</p>
-                                <p className="text-xs text-[var(--wa-gray)]">Get notified when your security code changes</p>
+            <div className="flex-1 overflow-y-auto custom-scrollbar pt-4">
+                {/* Profile Pic */}
+                <div className="flex justify-center mb-8 relative group cursor-pointer w-fit mx-auto transition-transform hover:scale-[1.02]">
+                    <div className="size-48 rounded-full overflow-hidden border-4 border-[var(--wa-header-bg)] shadow-xl relative">
+                        <img
+                            src={selectedImg || authUser?.profilePic || "/avatar.png"}
+                            alt="Profile"
+                            className={`size-full object-cover ${isCompiling ? "opacity-50" : ""}`}
+                        />
+                        {isCompiling && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                <div className="loading loading-spinner loading-md text-[#00a884]"></div>
                             </div>
-                            <input type="checkbox" className="toggle toggle-success toggle-sm" />
-                        </div>
-                        <div className="p-4 flex items-center justify-between">
-                            <p className="text-[#e9edef]">Two-step verification</p>
-                            <ChevronRight className="size-5 text-[var(--wa-gray)]" />
-                        </div>
+                        )}
                     </div>
+                    <label
+                        htmlFor="profile-upload-sidebar"
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white flex-col gap-2"
+                    >
+                        <Camera className="size-8" />
+                        <span className="text-[10px] uppercase font-bold tracking-wider">Change Photo</span>
+                    </label>
+                    <input
+                        type="file"
+                        id="profile-upload-sidebar"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={isCompiling}
+                    />
                 </div>
-                <div className="space-y-4">
-                    <h3 className="text-[#00a884] text-sm font-medium ml-2">Personal info</h3>
-                    <div className="bg-white/5 rounded-xl p-4 ring-1 ring-white/5 space-y-4">
-                        <div>
-                            <p className="text-[var(--wa-gray)] text-xs">Email</p>
-                            <p className="text-[#e9edef]">{authUser?.email}</p>
-                        </div>
-                        <div>
-                            <p className="text-[var(--wa-gray)] text-xs">Joined</p>
-                            <p className="text-[#e9edef]">{new Date(authUser?.createdAt).toLocaleDateString()}</p>
+
+                <div className="px-6 space-y-8 pb-8">
+                    {/* Name Section */}
+                    <div>
+                        <div className="text-[#00a884] text-sm font-medium mb-3 ml-1">Your name</div>
+                        {isEditingName ? (
+                            <div className="flex items-center gap-3 border-b-2 border-[#00a884] pb-1 animate-in fade-in duration-200">
+                                <input
+                                    type="text"
+                                    className="bg-transparent text-[#e9edef] text-[17px] outline-none w-full"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    autoFocus
+                                    onKeyDown={(e) => e.key === "Enter" && handleUpdateName()}
+                                />
+                                <Check className="size-5 text-[#00a884] cursor-pointer hover:scale-110 transition-transform" onClick={handleUpdateName} />
+                            </div>
+                        ) : (
+                            <div
+                                className="flex items-center justify-between text-[#e9edef] group border-b border-white/5 pb-3 hover:border-white/20 transition-colors cursor-pointer"
+                                onClick={() => setIsEditingName(true)}
+                            >
+                                <span className="text-[17px] font-medium">{authUser?.fullName}</span>
+                                <Edit2 className="size-4 text-[var(--wa-gray)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                        )}
+                        <p className="text-[var(--wa-gray)] text-[13px] mt-3 leading-relaxed opacity-80">
+                            This is not your username or pin. This name will be visible to your PingMe contacts.
+                        </p>
+                    </div>
+
+                    {/* About Section */}
+                    <div>
+                        <div className="text-[#00a884] text-sm font-medium mb-3 ml-1">About</div>
+                        {isEditingAbout ? (
+                            <div className="flex items-center gap-3 border-b-2 border-[#00a884] pb-1 animate-in fade-in duration-200">
+                                <input
+                                    type="text"
+                                    className="bg-transparent text-[#e9edef] text-[17px] outline-none w-full"
+                                    value={about}
+                                    onChange={(e) => setAbout(e.target.value)}
+                                    autoFocus
+                                    onKeyDown={(e) => e.key === "Enter" && handleUpdateAbout()}
+                                />
+                                <Check className="size-5 text-[#00a884] cursor-pointer hover:scale-110 transition-transform" onClick={handleUpdateAbout} />
+                            </div>
+                        ) : (
+                            <div
+                                className="flex items-center justify-between text-[#e9edef] group border-b border-white/5 pb-3 hover:border-white/20 transition-colors cursor-pointer"
+                                onClick={() => setIsEditingAbout(true)}
+                            >
+                                <span className="text-[17px] font-medium line-clamp-1">{authUser?.about || "Hey there! I am using PingMe."}</span>
+                                <Edit2 className="size-4 text-[var(--wa-gray)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Phone Section */}
+                    <div>
+                        <div className="text-[#00a884] text-sm font-medium mb-3 ml-1">Phone</div>
+                        {isEditingPhone ? (
+                            <div className="flex items-center gap-3 border-b-2 border-[#00a884] pb-1 animate-in fade-in duration-200">
+                                <input
+                                    type="text"
+                                    className="bg-transparent text-[#e9edef] text-[17px] outline-none w-full"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    autoFocus
+                                    onKeyDown={(e) => e.key === "Enter" && handleUpdatePhone()}
+                                />
+                                <Check className="size-5 text-[#00a884] cursor-pointer hover:scale-110 transition-transform" onClick={handleUpdatePhone} />
+                            </div>
+                        ) : (
+                            <div
+                                className="flex items-center justify-between text-[#e9edef] group border-b border-white/5 pb-3 hover:border-white/20 transition-colors cursor-pointer"
+                                onClick={() => setIsEditingPhone(true)}
+                            >
+                                <span className="text-[17px] font-medium">{authUser?.phone || "Add phone number"}</span>
+                                <Edit2 className="size-4 text-[var(--wa-gray)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Security Info */}
+                    <div className="pt-4 border-t border-white/5">
+                        <div className="bg-[#202c33] rounded-xl p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#2a3942] transition-colors">
+                            <Shield className="size-5 text-[var(--wa-gray)] group-hover:text-[#00a884] transition-colors" />
+                            <div className="flex-1">
+                                <p className="text-[#e9edef] text-sm font-medium">Security</p>
+                                <p className="text-[var(--wa-gray)] text-xs">Security notifications, two-step verification</p>
+                            </div>
+                            <ChevronRight className="size-4 text-[var(--wa-gray)]" />
                         </div>
                     </div>
                 </div>
