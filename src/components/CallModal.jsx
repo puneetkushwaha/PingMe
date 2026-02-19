@@ -24,21 +24,14 @@ const CallModal = () => {
             localVideoRef.current.srcObject = localStream;
             localVideoRef.current.play().catch(e => console.error("Error playing local stream:", e));
         }
-    }, [localStream]);
+    }, [localStream, call.status]);
 
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play().catch(e => console.error("Error playing remote stream:", e));
-
-            // Debug audio tracks
-            const audioTracks = remoteStream.getAudioTracks();
-            console.log('🔊 Remote stream audio tracks:', audioTracks.length);
-            audioTracks.forEach(track => {
-                console.log('  Track enabled:', track.enabled, 'muted:', track.muted);
-            });
         }
-    }, [remoteStream]);
+    }, [remoteStream, call.status]);
 
     if (!call) return null;
 
