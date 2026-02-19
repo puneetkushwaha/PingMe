@@ -24,14 +24,14 @@ const CallModal = () => {
             localVideoRef.current.srcObject = localStream;
             localVideoRef.current.play().catch(e => console.error("Error playing local stream:", e));
         }
-    }, [localStream, call.status]);
+    }, [localStream, call?.status]);
 
     useEffect(() => {
         if (remoteVideoRef.current && remoteStream) {
             remoteVideoRef.current.srcObject = remoteStream;
             remoteVideoRef.current.play().catch(e => console.error("Error playing remote stream:", e));
         }
-    }, [remoteStream, call.status]);
+    }, [remoteStream, call?.status]);
 
     if (!call) return null;
 
