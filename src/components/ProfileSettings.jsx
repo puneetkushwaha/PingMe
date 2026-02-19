@@ -62,7 +62,7 @@ const ProfileSettings = () => {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto bg-[var(--wa-sidebar-bg)] px-6 py-8 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto bg-[var(--wa-sidebar-bg)] px-6 pt-8 pb-28 custom-scrollbar">
 
                 {/* Profile Pic */}
                 <div className="flex justify-center mb-8 relative group cursor-pointer w-fit mx-auto">
