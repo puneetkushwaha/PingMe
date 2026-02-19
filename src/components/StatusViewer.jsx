@@ -136,10 +136,15 @@ const StatusViewer = ({ statusItem, onClose }) => {
                         <div className="overflow-y-auto flex-1 p-2">
                             {currentStatus.views && currentStatus.views.length > 0 ? (
                                 currentStatus.views.map((viewer) => (
-                                    <div key={viewer._id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5">
-                                        <img src={viewer.profilePic || "/avatar.png"} className="size-10 rounded-full object-cover" alt="" />
+                                    <div key={viewer.userId._id || viewer._id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5">
+                                        <img src={viewer.userId.profilePic || viewer.profilePic || "/avatar.png"} className="size-10 rounded-full object-cover" alt="" />
                                         <div className="flex-1">
-                                            <p className="text-[#e9edef] text-[15px] font-medium">{viewer.fullName}</p>
+                                            <p className="text-[#e9edef] text-[15px] font-medium">{viewer.userId.fullName || viewer.fullName}</p>
+                                            {viewer.viewedAt && (
+                                                <p className="text-[13px] text-zinc-500">
+                                                    {new Date(viewer.viewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 ))

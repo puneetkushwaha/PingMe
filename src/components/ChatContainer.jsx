@@ -20,7 +20,7 @@ const ChatContainer = () => {
     searchQuery,
     addReaction,
   } = useChatStore();
-  const { authUser } = useAuthStore();
+  const { socket } = useAuthStore();
   const { wallpaper: localWallpaper } = useThemeStore();
   const wallpaper = authUser?.chatSettings?.wallpaper || localWallpaper;
   const mediaVisibility = authUser?.chatSettings?.mediaVisibility !== false;
@@ -31,7 +31,7 @@ const ChatContainer = () => {
     getMessages(selectedUser._id);
     subscribeToMessages();
     return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages, socket]);
 
   useEffect(() => {
     if (messageEndRef.current && messages) {

@@ -76,7 +76,7 @@ const Sidebar = () => {
                   onClick={() => setIsGroupModalOpen(true)}
                   className="w-full text-left px-4 py-3 text-sm text-[#e9edef] hover:bg-white/5 flex items-center gap-3"
                 >
-                  <UserPlus className="size-4" />
+                  <UserPlusIcon className="size-4" />
                   New group
                 </button>
                 <button

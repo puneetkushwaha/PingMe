@@ -19,7 +19,7 @@ const LeftNav = ({ className }) => {
 
                     <div className="relative group cursor-pointer" onClick={() => setActiveSidebar("calls")}>
                         <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-[#00a884] rounded-r-full ${activeSidebar === 'calls' && !isProfileOpen ? 'block' : 'hidden'}`}></div>
-                        <Phone className={`size-6 transition-colors ${activeSidebar === 'calls' && !isProfileOpen ? 'text-[#e9edef]' : 'text-[var(--wa-gray)] hover:text-[#e9edef]'}`} />
+                        <PhoneIcon className={`size-6 transition-colors ${activeSidebar === 'calls' && !isProfileOpen ? 'text-[#e9edef]' : 'text-[var(--wa-gray)] hover:text-[#e9edef]'}`} />
                     </div>
 
                     <div className="relative group cursor-pointer" onClick={() => setActiveSidebar("status")}>
