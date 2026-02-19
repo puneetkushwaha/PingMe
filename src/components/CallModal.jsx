@@ -44,28 +44,28 @@ const CallModal = () => {
     const displayPic = displayInfo?.profilePic || displayInfo?.groupPic || "/avatar.png";
 
     return (
-        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm ${call.status === 'connected' && call.type === 'video' ? '' : 'p-4'}`}>
-            <div className={`bg-[#202c33] w-full ${call.status === 'connected' && call.type === 'video' ? 'h-full w-full max-w-none rounded-none' : 'max-w-lg rounded-2xl'} overflow-hidden shadow-2xl border border-zinc-700 relative flex flex-col`}>
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm ${call?.status === 'connected' && call?.type === 'video' ? '' : 'p-4'}`}>
+            <div className={`bg-[#202c33] w-full ${call?.status === 'connected' && call?.type === 'video' ? 'h-full w-full max-w-none rounded-none' : 'max-w-lg rounded-2xl'} overflow-hidden shadow-2xl border border-zinc-700 relative flex flex-col`}>
 
                 {/* Call Info */}
-                <div className={`flex flex-col items-center text-center ${call.status === 'connected' && call.type === 'video' ? 'absolute top-12 left-0 w-full z-20 pointer-events-none' : 'p-8'}`}>
-                    {(call.status !== 'connected' || call.type !== 'video') && (
+                <div className={`flex flex-col items-center text-center ${call?.status === 'connected' && call?.type === 'video' ? 'absolute top-12 left-0 w-full z-20 pointer-events-none' : 'p-8'}`}>
+                    {(call?.status !== 'connected' || call?.type !== 'video') && (
                         <div className="size-24 rounded-full overflow-hidden mb-4 ring-4 ring-[#00a884]">
                             <img src={displayPic} alt="" className="w-full h-full object-cover" />
                         </div>
                     )}
-                    <h2 className={`font-bold text-white mb-1 ${call.status === 'connected' && call.type === 'video' ? 'text-xl drop-shadow-md' : 'text-2xl'}`}>{displayName}</h2>
-                    <p className={`animate-pulse ${call.status === 'connected' && call.type === 'video' ? 'text-white/80 text-sm drop-shadow-md' : 'text-[var(--wa-gray)]'}`}>
-                        {call.status === 'calling' ? 'Calling...' :
-                            call.status === 'incoming' ? 'Incoming ' + call.type + ' call...' :
+                    <h2 className={`font-bold text-white mb-1 ${call?.status === 'connected' && call?.type === 'video' ? 'text-xl drop-shadow-md' : 'text-2xl'}`}>{displayName}</h2>
+                    <p className={`animate-pulse ${call?.status === 'connected' && call?.type === 'video' ? 'text-white/80 text-sm drop-shadow-md' : 'text-[var(--wa-gray)]'}`}>
+                        {call?.status === 'calling' ? 'Calling...' :
+                            call?.status === 'incoming' ? 'Incoming ' + call?.type + ' call...' :
                                 'Connected'}
                     </p>
                 </div>
 
                 {/* Video Streams */}
-                {call.type === 'video' && (
-                    <div className={`relative bg-black flex items-center justify-center ${call.status === 'connected' ? 'flex-1 h-full' : 'aspect-video'}`}>
-                        {call.status === 'connected' && remoteStream ? (
+                {call?.type === 'video' && (
+                    <div className={`relative bg-black flex items-center justify-center ${call?.status === 'connected' ? 'flex-1 h-full' : 'aspect-video'}`}>
+                        {call?.status === 'connected' && remoteStream ? (
                             <video ref={remoteVideoRef} autoPlay playsInline muted={false} className="w-full h-full object-cover" />
                         ) : (
                             <div className="flex flex-col items-center justify-center">
@@ -82,13 +82,13 @@ const CallModal = () => {
                 )}
 
                 {/* Audio for audio-only calls (video calls use the video element for audio) */}
-                {call.type === 'audio' && (
+                {call?.type === 'audio' && (
                     <audio ref={remoteVideoRef} autoPlay className="hidden" />
                 )}
 
                 {/* Controls */}
-                <div className={`p-6 flex justify-center items-center gap-8 ${call.status === 'connected' && call.type === 'video' ? 'absolute bottom-8 left-1/2 -translate-x-1/2 bg-transparent z-20' : 'bg-[#111b21]'}`}>
-                    {call.status === 'incoming' ? (
+                <div className={`p-6 flex justify-center items-center gap-8 ${call?.status === 'connected' && call?.type === 'video' ? 'absolute bottom-8 left-1/2 -translate-x-1/2 bg-transparent z-20' : 'bg-[#111b21]'}`}>
+                    {call?.status === 'incoming' ? (
                         <>
                             <button
                                 onClick={acceptCall}

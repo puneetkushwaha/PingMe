@@ -59,7 +59,7 @@ export const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.log("Error in checkAuth:", error);
       // Only logout if explicit unauthorized, otherwise keep state (might be network error)
-      if (error.response?.status === 401) {
+      if (error?.response?.status === 401) {
         set({ authUser: null });
       }
     } finally {
