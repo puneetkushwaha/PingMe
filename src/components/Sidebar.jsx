@@ -257,11 +257,11 @@ const Sidebar = () => {
                       <div className={`font-bold truncate text-[15px] ${selectedUser?._id === item._id ? "text-[var(--wa-teal)]" : "text-[#e9edef]"}`}>
                         {item.fullName || item.name}
                       </div>
-                      <span className="text-[10px] text-[var(--wa-gray)]">
+                      <span className={`text-[10px] ${!item.isGroup && unreadCounts[item._id] > 0 ? "text-emerald-500 font-bold" : "text-[var(--wa-gray)]"}`}>
                         {item.lastMessageTime ? new Date(item.lastMessageTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : ''}
                       </span>
                     </div>
-                    <div className="text-[12px] truncate flex items-center gap-1 text-[var(--wa-gray)]">
+                    <div className={`text-[12px] truncate flex items-center gap-1 ${!item.isGroup && unreadCounts[item._id] > 0 ? "text-emerald-500 font-medium" : "text-[var(--wa-gray)]"}`}>
                       {typingUsers.includes(item._id) ? (
                         <span className="text-emerald-500">typing...</span>
                       ) : (
