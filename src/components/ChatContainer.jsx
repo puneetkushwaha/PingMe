@@ -20,7 +20,7 @@ const ChatContainer = () => {
     searchQuery,
     addReaction,
   } = useChatStore();
-  const { socket } = useAuthStore();
+  const { socket, authUser } = useAuthStore();
   const { wallpaper: localWallpaper } = useThemeStore();
   const wallpaper = authUser?.chatSettings?.wallpaper || localWallpaper;
   const mediaVisibility = authUser?.chatSettings?.mediaVisibility !== false;
