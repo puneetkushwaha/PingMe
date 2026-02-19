@@ -34,10 +34,9 @@ const LoginPage = () => {
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div
-                className="w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:bg-white/90
-              transition-colors overflow-hidden p-1.5"
+                className="w-16 h-16 rounded-full flex items-center justify-center transition-colors overflow-hidden border-2 border-white/20"
               >
-                <img src="/logo.png" className="w-full h-full object-contain" alt="Logo" />
+                <img src="/logo.png" className="w-full h-full object-cover" alt="Logo" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
               <p className="text-base-content/60">

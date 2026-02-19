@@ -46,10 +46,9 @@ const SignUpPage = () => {
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div
-                className="size-12 rounded-full bg-white flex items-center justify-center 
-              group-hover:bg-white/90 transition-colors overflow-hidden p-1.5"
+                className="size-16 rounded-full flex items-center justify-center transition-colors overflow-hidden border-2 border-white/20"
               >
-                <img src="/logo.png" className="size-full object-contain" alt="Logo" />
+                <img src="/logo.png" className="size-full object-cover" alt="Logo" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Create Account</h1>
               <p className="text-base-content/60">Get started with your free account</p>
