@@ -248,25 +248,36 @@ export const useChatStore = create((set, get) => ({
         toast.success(`New message from ${isGroupMessage ? "Group" : senderName}`);
       }
 
-      // Pre-load sound for performance (re-using the same object)
+      const authUser = useAuthStore.getState().authUser;
+      const notificationSettings = authUser?.notificationSettings || {
+        showNotifications: true,
+        showPreviews: true,
+        notificationSound: true
+      };
+
       if (!get().notiSound) {
         set({ notiSound: new Audio("/notification.mp3") });
       }
       const sound = get().notiSound;
 
       if (!document.hasFocus() || !isMessageForSelectedChat) {
-        sound.currentTime = 0; // Reset to start
-        sound.play().catch(err => {
-          // Ignore play errors (usually user interaction requirement)
-        });
+        // Play sound if enabled
+        if (notificationSettings.notificationSound !== false) {
+          sound.currentTime = 0;
+          sound.play().catch(() => { });
+        }
 
-        if (!isMessageForSelectedChat && Notification.permission === "granted") {
-          // Find sender name for notification
+        // Show browser notification if enabled
+        if (notificationSettings.showNotifications !== false && !isMessageForSelectedChat && Notification.permission === "granted") {
           const sender = get().users.find(u => u._id === newMessage.senderId);
           const senderName = sender?.fullName || "Someone";
 
+          const notificationBody = notificationSettings.showPreviews !== false
+            ? (decryptedMessage.text || "Sent a media file")
+            : "New message";
+
           new Notification(`New message from ${isGroupMessage ? "Group" : senderName}`, {
-            body: decryptedMessage.text || "Sent a media file",
+            body: notificationBody,
             icon: "/icon-192x192.png"
           });
         }

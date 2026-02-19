@@ -2,7 +2,8 @@ import { useState } from "react";
 import {
     ArrowLeft, Moon, Bell, Shield, HelpCircle, LogOut, ChevronRight,
     Key, CircleUser, Languages, Database, Accessibility, Info,
-    Smartphone, Volume2, Image as ImageIcon, Download, Edit2, Check
+    Smartphone, Volume2, Image as ImageIcon, Download, Edit2, Check,
+    Camera, MessageSquare, Zap
 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
@@ -447,40 +448,63 @@ const SettingsSidebarSection = ({ onBack }) => {
         </SubSectionLayout>
     );
 
+    const handleUpdateNotificationSettings = async (key, value) => {
+        try {
+            await updateProfile({
+                notificationSettings: {
+                    ...authUser?.notificationSettings,
+                    [key]: value
+                }
+            });
+            toast.success("Settings updated");
+        } catch (error) {
+            toast.error("Failed to update settings");
+        }
+    };
+
     const renderNotifications = () => (
         <SubSectionLayout title="Notifications" onBack={() => setActiveSection("main")}>
             <div className="p-4 space-y-6">
                 <div className="space-y-4">
-                    <h3 className="text-[#00a884] text-sm font-medium ml-2">Messages</h3>
-                    <div className="bg-white/5 rounded-xl overflow-hidden ring-1 ring-white/5">
+                    <h3 className="text-[#00a884] text-sm font-medium ml-2 uppercase tracking-wider text-[11px]">Messages</h3>
+                    <div className="bg-[#202c33]/50 rounded-xl overflow-hidden ring-1 ring-white/5">
                         <div className="p-4 flex items-center justify-between border-b border-white/5">
                             <div className="flex items-center gap-4">
-                                <Volume2 className="size-5 text-[var(--wa-gray)]" />
-                                <div>
-                                    <p className="text-[#e9edef]">Notification tone</p>
-                                    <p className="text-xs text-[var(--wa-gray)]">Default</p>
-                                </div>
+                                <Bell className="size-5 text-[var(--wa-gray)]" />
+                                <p className="text-[#e9edef]">Notification tone</p>
                             </div>
-                            <ChevronRight className="size-5 text-[var(--wa-gray)]" />
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success toggle-sm"
+                                checked={authUser?.notificationSettings?.notificationSound !== false}
+                                onChange={(e) => handleUpdateNotificationSettings("notificationSound", e.target.checked)}
+                            />
+                        </div>
+                        <div className="p-4 flex items-center justify-between border-b border-white/5">
+                            <div className="flex items-center gap-4">
+                                <MessageSquare className="size-5 text-[var(--wa-gray)]" />
+                                <p className="text-[#e9edef]">Show Previews</p>
+                            </div>
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success toggle-sm"
+                                checked={authUser?.notificationSettings?.showPreviews !== false}
+                                onChange={(e) => handleUpdateNotificationSettings("showPreviews", e.target.checked)}
+                            />
                         </div>
                         <div className="p-4 flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <Smartphone className="size-5 text-[var(--wa-gray)]" />
-                                <div>
-                                    <p className="text-[#e9edef]">Vibrate</p>
-                                    <p className="text-xs text-[var(--wa-gray)]">Default</p>
-                                </div>
+                                <Zap className="size-5 text-[var(--wa-gray)]" />
+                                <p className="text-[#e9edef]">High priority notifications</p>
                             </div>
-                            <ChevronRight className="size-5 text-[var(--wa-gray)]" />
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success toggle-sm"
+                                checked={authUser?.notificationSettings?.showNotifications !== false}
+                                onChange={(e) => handleUpdateNotificationSettings("showNotifications", e.target.checked)}
+                            />
                         </div>
                     </div>
-                </div>
-                <div className="bg-white/5 rounded-xl p-4 ring-1 ring-white/5 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Bell className="size-5 text-[var(--wa-gray)]" />
-                        <p className="text-[#e9edef]">High priority notifications</p>
-                    </div>
-                    <input type="checkbox" className="toggle toggle-success toggle-sm" defaultChecked />
                 </div>
             </div>
         </SubSectionLayout>
