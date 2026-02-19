@@ -1,4 +1,4 @@
-import { X, QrCode, ShieldCheck, Monitor, Camera as CameraIcon, RefreshCw, Smartphone as SmartphoneIcon, List, Copy, Check } from "lucide-react";
+import { X, QrCode, ShieldCheck, Monitor, Camera as CameraIcon, RefreshCw, Smartphone, List, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";
@@ -59,7 +59,7 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                                     onClick={() => setActiveTab("link")}
                                     className={`flex-1 py-3 text-sm font-medium transition-all border-b-2 flex items-center justify-center gap-2 ${activeTab === "link" ? "border-[#00a884] text-[#00a884]" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
                                 >
-                                    <Smartphone className="size-4" /> Link New
+                                    <SmartphoneIcon className="size-4" /> Link New
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("devices")}
