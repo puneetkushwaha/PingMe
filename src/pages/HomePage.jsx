@@ -25,6 +25,7 @@ import StatusViewer from "../components/StatusViewer";
 import InviteSidebar from "../components/InviteSidebar";
 import ContactsSidebar from "../components/ContactsSidebar";
 import ContactInfoSidebar from "../components/ContactInfoSidebar";
+import SettingsSidebarSection from "../components/SettingsSidebarSection";
 
 import { useCallStore } from "../store/useCallStore";
 
@@ -168,132 +169,8 @@ const HomePage = () => {
           )}
 
           {activeSidebar === "settings" && (
-            <div className="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
-              <div className="p-4 bg-[var(--wa-sidebar-bg)] h-16 flex items-center shrink-0 border-b border-white/5">
-                <h1 className="text-[#e9edef] text-[22px] font-bold">Settings</h1>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                {/* 1. Account Info */}
-                <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => setProfileOpen(true)}>
-                  <div className="flex items-center gap-4">
-                    <img src={authUser?.profilePic || "/avatar.png"} alt="Profile" className="size-14 rounded-full object-cover" />
-                    <div>
-                      <h2 className="text-lg font-bold text-white">{authUser?.fullName}</h2>
-                      <p className="text-sm text-[var(--wa-gray)]">{authUser?.email}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. Chat Wallpaper */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[var(--wa-teal)] px-1">
-                    <ImageIcon className="size-4" />
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--wa-teal)]">Chat Wallpaper</h2>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {WALLPAPERS.map((w) => (
-                      <button
-                        key={w.id}
-                        onClick={() => setWallpaper(w.url)}
-                        className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${wallpaper === w.url ? "border-[var(--wa-teal)]" : "border-transparent hover:border-white/20"}`}
-                      >
-                        {w.url ? (
-                          <img src={w.url} alt={w.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full bg-[#050505]"></div>
-                        )}
-                        {wallpaper === w.url && (
-                          <div className="absolute top-1 right-1 bg-[var(--wa-teal)] rounded-full p-0.5">
-                            <div className="size-1.5 bg-white rounded-full" />
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Notifications */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[var(--wa-teal)] px-1">
-                    <Bell className="size-4" />
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--wa-teal)]">Notifications</h2>
-                  </div>
-                  <div className="bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 divide-y divide-white/5">
-                    <div className="p-3 flex items-center justify-between hover:bg-white/5 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <Volume2 className="size-5 text-[var(--wa-gray)]" />
-                        <div>
-                          <h3 className="text-[#e9edef] font-medium text-sm">Message Sounds</h3>
-                        </div>
-                      </div>
-                      <input type="checkbox" className="toggle toggle-success toggle-sm" defaultChecked />
-                    </div>
-                    <div className="p-3 flex items-center justify-between hover:bg-white/5 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <Smartphone className="size-5 text-[var(--wa-gray)]" />
-                        <div>
-                          <h3 className="text-[#e9edef] font-medium text-sm">Vibration</h3>
-                        </div>
-                      </div>
-                      <input type="checkbox" className="toggle toggle-success toggle-sm" />
-                    </div>
-                    <button
-                      onClick={() => {
-                        if (window.deferredPrompt) {
-                          window.deferredPrompt.prompt();
-                          window.deferredPrompt.userChoice.then((choice) => {
-                            if (choice.outcome === 'accepted') {
-                              toast.success('PingMe installed! 🎉');
-                            }
-                            window.deferredPrompt = null;
-                          });
-                        } else if (window.matchMedia('(display-mode: standalone)').matches) {
-                          toast.success('Already installed as PWA! ✅');
-                        } else {
-                          toast('Install option not available on this device', { icon: 'ℹ️' });
-                        }
-                      }}
-                      className="w-full p-3 flex items-center justify-between hover:bg-white/5 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Download className="size-5 text-[var(--wa-teal)]" />
-                        <div className="text-left">
-                          <h3 className="text-[#e9edef] font-medium text-sm">Install App</h3>
-                          <p className="text-[var(--wa-gray)] text-xs">Use PingMe as a standalone app</p>
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* 4. Privacy & Security */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[var(--wa-teal)] px-1">
-                    <Shield className="size-4" />
-                    <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--wa-teal)]">Privacy</h2>
-                  </div>
-                  <div className="bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 divide-y divide-white/5">
-                    <div className="p-3 hover:bg-white/5 transition-colors">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Lock className="size-5 text-[var(--wa-gray)]" />
-                        <div>
-                          <h3 className="text-[#e9edef] font-medium text-sm">Blocked Contacts</h3>
-                          <p className="text-xs text-[var(--wa-gray)]">{authUser?.blockedUsers?.length || 0} contacts</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Thank You Message */}
-                <div className="mt-12 mb-8 text-center px-4">
-                  <h3 className="text-[#00a884] text-2xl font-bold italic opacity-80 mb-2 underline decoration-zinc-800 underline-offset-8">
-                    Thank you for using PingMe!
-                  </h3>
-                  <p className="text-[var(--wa-gray)] text-sm">Made with 💚 for the community</p>
-                </div>
-              </div>
+            <div className="flex-1 flex flex-col bg-[#111b21] overflow-hidden animate-in slide-in-from-left duration-200">
+              <SettingsSidebarSection onBack={() => setActiveSidebar("chats")} />
             </div>
           )}
         </div>
