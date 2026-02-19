@@ -3,7 +3,7 @@ import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCallStore } from "../store/useCallStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus, Settings, Download, Phone, MonitorUp } from "lucide-react";
+import { Users as UsersIcon, CircleDashed, MessageSquarePlus, EllipsisVertical, Search, Filter, Archive, LogOut, UserPlus as UserPlusIcon, Settings, Download, Phone as PhoneIcon, MonitorUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import NewGroupModal from "./NewGroupModal";
@@ -58,7 +58,7 @@ const Sidebar = () => {
         </h1>
         <div className="flex items-center gap-4 text-[var(--wa-gray)]">
           {activeSidebar === "calls" ? (
-            <Phone
+            <PhoneIcon
               className="size-5 cursor-pointer hover:text-white transition-colors"
               onClick={() => toast("Select contact to call")}
             />
@@ -163,7 +163,7 @@ const Sidebar = () => {
         {activeSidebar === "calls" ? (
           calls.length === 0 ? (
             <div className="text-center text-zinc-500 py-10 px-6">
-              <Phone className="size-12 mx-auto mb-4 opacity-20" />
+              <PhoneIcon className="size-12 mx-auto mb-4 opacity-20" />
               <p>No call history yet</p>
             </div>
           ) : (
@@ -193,11 +193,11 @@ const Sidebar = () => {
                     </div>
                     <div className="flex items-center gap-1.5 text-[13px]">
                       {call.status === "missed" ? (
-                        <Phone className="size-3 text-red-500" />
+                        <PhoneIcon className="size-3 text-red-500" />
                       ) : isOutgoing ? (
-                        <Phone className="size-3 text-emerald-500 rotate-[135deg]" />
+                        <PhoneIcon className="size-3 text-emerald-500 rotate-[135deg]" />
                       ) : (
-                        <Phone className="size-3 text-emerald-500" />
+                        <PhoneIcon className="size-3 text-emerald-500" />
                       )}
                       <span className={`${call.status === "missed" ? "text-red-500" : "text-[var(--wa-gray)]"}`}>
                         {call.status === "missed" ? "Missed" : isOutgoing ? "Outgoing" : "Incoming"}
@@ -212,7 +212,7 @@ const Sidebar = () => {
                     onClick={() => initiateCall(withUser._id, call.type)}
                     className="p-2 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    {call.type === "video" ? <Users className="size-5" /> : <Phone className="size-5" />}
+                    {call.type === "video" ? <UsersIcon className="size-5" /> : <PhoneIcon className="size-5" />}
                   </button>
                 </div>
               );

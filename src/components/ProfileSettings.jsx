@@ -1,4 +1,4 @@
-import { ArrowLeft, Camera, User, Info, Edit2, Check } from "lucide-react";
+import { ArrowLeft, Camera as CameraIcon, User as UserIcon, Info, Edit2, Check } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
 
@@ -73,7 +73,7 @@ const ProfileSettings = () => {
                         htmlFor="profile-upload"
                         className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white flex-col gap-2"
                     >
-                        <Camera className="size-8" />
+                        <CameraIcon className="size-8" />
                         <span className="text-xs uppercase text-center w-24">Change Profile Photo</span>
                     </label>
                     <input

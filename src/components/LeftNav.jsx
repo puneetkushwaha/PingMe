@@ -1,4 +1,4 @@
-import { MessageSquare, Users, CircleDashed, Settings, Star, MessageCircle, Phone, Archive, LogOut, UserPlus } from "lucide-react";
+import { MessageSquare, Users as UsersIcon, CircleDashed, Settings as SettingsIcon, Star, MessageCircle, Phone as PhoneIcon, Archive, LogOut, UserPlus } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 
@@ -46,7 +46,7 @@ const LeftNav = ({ className }) => {
                     </div>
                     <div className="relative group cursor-pointer" onClick={() => setActiveSidebar("settings")}>
                         <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-8 bg-[#00a884] rounded-r-full ${activeSidebar === 'settings' ? 'block' : 'hidden'}`}></div>
-                        <Settings className={`size-6 transition-colors ${activeSidebar === 'settings' ? 'text-[#e9edef]' : 'text-[var(--wa-gray)] hover:text-[#e9edef]'}`} title="Settings" />
+                        <SettingsIcon className={`size-5 transition-colors ${activeSidebar === 'settings' ? 'text-[#e9edef]' : 'text-[var(--wa-gray)] hover:text-[#e9edef]'}`} title="Settings" />
                     </div>
                     <div className="relative group cursor-pointer" onClick={() => setProfileOpen(true)} title="Profile">
                         <img src={authUser?.profilePic || "/avatar.png"} className={`size-8 rounded-full object-cover transition-opacity ${isProfileOpen ? 'ring-2 ring-[#00a884]' : 'opacity-80 hover:opacity-100'}`} alt="Profile" />
@@ -71,7 +71,7 @@ const LeftNav = ({ className }) => {
                 </div>
                 <div className="flex flex-col items-center gap-1 cursor-pointer flex-1 py-2" onClick={() => setActiveSidebar("calls")}>
                     <div className={`p-1 px-4 rounded-full transition-all ${activeSidebar === 'calls' ? 'bg-[#00a884]/20 text-[#00a884]' : 'text-[var(--wa-gray)]'}`}>
-                        <Phone className="size-6" />
+                        <PhoneIcon className="size-5" />
                     </div>
                     <span className={`text-[11px] font-medium ${activeSidebar === 'calls' ? 'text-[#e9edef]' : 'text-[var(--wa-gray)]'}`}>Calls</span>
                 </div>

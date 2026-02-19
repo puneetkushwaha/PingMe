@@ -3,7 +3,7 @@ import {
     ArrowLeft, Moon, Bell, Shield, HelpCircle, LogOut, ChevronRight,
     Key, CircleUser, Languages, Database, Accessibility, Info,
     Smartphone, Volume2, Image as ImageIcon, Download, Edit2, Check,
-    Camera, MessageSquare, Zap
+    Camera as CameraIcon, MessageSquare, Zap
 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
@@ -157,7 +157,7 @@ const SettingsSidebarSection = ({ onBack }) => {
                         htmlFor="profile-upload-sidebar"
                         className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white flex-col gap-2"
                     >
-                        <Camera className="size-8" />
+                        <CameraIcon className="size-8" />
                         <span className="text-[10px] uppercase font-bold tracking-wider">Change Photo</span>
                     </label>
                     <input

@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
 import {
   MessageSquare, Users, CircleDashed, Settings, Star, MessageCircle,
-  Phone, Archive, LogOut, UserPlus, Video,
+  Phone as PhoneIcon, Archive, LogOut, UserPlus, Video,
   Plus, Moon, Sun, Wallpaper, MessageSquarePlus,
   Send, Bell, Shield, Lock, Smartphone, Image as ImageIcon, Volume2, Download
 } from "lucide-react";
@@ -202,7 +202,7 @@ const HomePage = () => {
               else toast("Starting a call...");
             }}
           >
-            {activeSidebar === "chats" ? <MessageSquarePlus className="size-6" /> : <Phone className="size-6" />}
+            {activeSidebar === "chats" ? <MessageSquarePlus className="size-6" /> : <PhoneIcon className="size-6" />}
           </button>
         )}
       </div>

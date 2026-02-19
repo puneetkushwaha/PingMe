@@ -1,4 +1,4 @@
-import { X, QrCode, ShieldCheck, Monitor, Camera, RefreshCw, Smartphone, List, Copy, Check } from "lucide-react";
+import { X, QrCode, ShieldCheck, Monitor, Camera as CameraIcon, RefreshCw, Smartphone as SmartphoneIcon, List, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";

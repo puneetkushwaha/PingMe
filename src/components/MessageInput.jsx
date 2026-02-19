@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Image, Send, X, Smile, Plus, Mic, Trash2, File, FileText, MapPin, User, Camera } from "lucide-react";
+import { Image as ImageIcon, Send, X, Smile, Plus, Mic, Trash2, File as FileIcon, FileText, MapPin, User as UserIcon, Camera as CameraIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -362,7 +362,7 @@ const MessageInput = () => {
                     className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                   >
                     <div className="bg-pink-500/20 p-1.5 rounded-lg">
-                      <Camera className="size-3.5 text-pink-500" />
+                      <CameraIcon className="size-3.5 text-pink-500" />
                     </div>
                     Camera
                   </button>
@@ -371,7 +371,7 @@ const MessageInput = () => {
                     className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                   >
                     <div className="bg-blue-500/20 p-1.5 rounded-lg">
-                      <Image className="size-3.5 text-blue-500" />
+                      <ImageIcon className="size-3.5 text-blue-500" />
                     </div>
                     Gallery
                   </button>
@@ -380,7 +380,7 @@ const MessageInput = () => {
                     className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                   >
                     <div className="bg-indigo-500/20 p-1.5 rounded-lg">
-                      <File className="size-3.5 text-indigo-500" />
+                      <FileIcon className="size-3.5 text-indigo-500" />
                     </div>
                     Document
                   </button>
@@ -398,7 +398,7 @@ const MessageInput = () => {
                     className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
                   >
                     <div className="bg-amber-500/20 p-1.5 rounded-lg">
-                      <User className="size-3.5 text-amber-500" />
+                      <UserIcon className="size-3.5 text-amber-500" />
                     </div>
                     Contact
                   </button>

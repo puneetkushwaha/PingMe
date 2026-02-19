@@ -23,7 +23,7 @@ export const useCallStore = create((set, get) => ({
             set({ audioContextWarmed: true });
             console.log("🔊 Audio warmed up successfully");
         }).catch((err) => {
-            console.error("🔇 Audio warm-up failed:", err);
+            // Silently handle - this is expected if no user interaction yet
         });
     },
 
