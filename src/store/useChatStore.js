@@ -213,6 +213,8 @@ export const useChatStore = create((set, get) => ({
     if (!socket) return;
 
     socket.on("newMessage", (newMessage) => {
+      const authUser = useAuthStore.getState().authUser;
+      const isOwnMessage = newMessage.senderId === authUser._id;
       const isGroupMessage = !!newMessage.groupId;
       const idToMatch = isGroupMessage ? newMessage.groupId : newMessage.senderId;
       const isMessageForSelectedChat = selectedUser && idToMatch === selectedUser._id;
@@ -224,14 +226,18 @@ export const useChatStore = create((set, get) => ({
       };
 
       if (isMessageForSelectedChat) {
-        set({
-          messages: [...get().messages, decryptedMessage],
-        });
+        // Prevent duplicate if already added by sendMessage (optimistic update)
+        const messageExists = get().messages.some(msg => msg._id === decryptedMessage._id);
+        if (!messageExists) {
+          set({
+            messages: [...get().messages, decryptedMessage],
+          });
+        }
 
         if (!isGroupMessage) {
           socket.emit("markMessagesAsSeen", { senderId: selectedUser._id });
         }
-      } else {
+      } else if (!isOwnMessage) {
         if (!isGroupMessage) {
           set((state) => ({
             unreadCounts: {
@@ -248,7 +254,7 @@ export const useChatStore = create((set, get) => ({
         toast.success(`New message from ${isGroupMessage ? "Group" : senderName}`);
       }
 
-      const authUser = useAuthStore.getState().authUser;
+
       const notificationSettings = authUser?.notificationSettings || {
         showNotifications: true,
         showPreviews: true,
@@ -262,7 +268,7 @@ export const useChatStore = create((set, get) => ({
       }
       const sound = get().notiSound;
 
-      if (!document.hasFocus() || !isMessageForSelectedChat) {
+      if (!isOwnMessage && (!document.hasFocus() || !isMessageForSelectedChat)) {
         // Play sound if enabled
         if (notificationSettings.notificationSound !== false) {
           sound.currentTime = 0;
