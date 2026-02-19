@@ -114,7 +114,7 @@ export const useChatStore = create((set, get) => ({
       // Decrypt messages
       const messages = res.data.map(msg => ({
         ...msg,
-        text: msg.isEncrypted ? decryptMessage(msg.text) : msg.text
+        text: (msg.isEncrypted || msg.text?.startsWith("U2FsdGVkX1")) ? decryptMessage(msg.text) : msg.text
       }));
       set({ messages });
 
@@ -220,7 +220,7 @@ export const useChatStore = create((set, get) => ({
       // Decrypt incoming message immediately
       const decryptedMessage = {
         ...newMessage,
-        text: newMessage.isEncrypted ? decryptMessage(newMessage.text) : newMessage.text
+        text: (newMessage.isEncrypted || newMessage.text?.startsWith("U2FsdGVkX1")) ? decryptMessage(newMessage.text) : newMessage.text
       };
 
       if (isMessageForSelectedChat) {

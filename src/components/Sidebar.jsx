@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { decryptMessage } from "../lib/encryption";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCallStore } from "../store/useCallStore";
@@ -264,7 +265,7 @@ const Sidebar = () => {
                       {typingUsers.includes(item._id) ? (
                         <span className="text-emerald-500">typing...</span>
                       ) : (
-                        item.lastMessage || "No messages yet"
+                        (item.lastMessage && item.lastMessage.startsWith("U2FsdGVkX1") ? decryptMessage(item.lastMessage) : item.lastMessage) || "No messages yet"
                       )}
                     </div>
                   </div>
