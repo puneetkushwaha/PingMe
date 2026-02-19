@@ -150,12 +150,23 @@ const ChatContainer = () => {
                           onClick={() => window.open(`https://www.google.com/maps?q=${message.location.lat},${message.location.lng}`, "_blank")}
                         >
                           <div className="h-32 bg-[#0b141a] relative flex items-center justify-center">
-                            <MapPin className="size-10 text-red-500" />
+                            <MapPin className={`size-10 ${message.location.isLive ? "text-emerald-500 animate-pulse" : "text-red-500"}`} />
+                            {message.location.isLive && (
+                              <div className="absolute inset-0 border-2 border-emerald-500/30 rounded-lg animate-ping"></div>
+                            )}
                             <div className="absolute inset-0 bg-gradient-to-t from-[#202c33] to-transparent opacity-50" />
                           </div>
-                          <div className="p-3 flex flex-col gap-1">
-                            <span className="text-[14px] font-bold text-[var(--wa-teal)]">Live Location</span>
+                          <div className="p-3 flex flex-col gap-1 relative">
+                            <span className="text-[14px] font-bold text-[var(--wa-teal)]">
+                              {message.location.isLive ? "Live Location" : "Current Location"}
+                            </span>
                             <span className="text-[12px] text-zinc-400">Click to view on Google Maps</span>
+                            {message.location.isLive && (
+                              <span className="absolute top-2 right-2 flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                              </span>
+                            )}
                           </div>
                         </div>
                       )}
