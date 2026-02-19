@@ -193,15 +193,15 @@ const Sidebar = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-[13px]">
-                      {call.status === "missed" ? (
+                      {call?.status === "missed" ? (
                         <PhoneIcon className="size-3 text-red-500" />
                       ) : isOutgoing ? (
                         <PhoneIcon className="size-3 text-emerald-500 rotate-[135deg]" />
                       ) : (
                         <PhoneIcon className="size-3 text-emerald-500" />
                       )}
-                      <span className={`${call.status === "missed" ? "text-red-500" : "text-[var(--wa-gray)]"}`}>
-                        {call.status === "missed" ? "Missed" : isOutgoing ? "Outgoing" : "Incoming"}
+                      <span className={`${call?.status === "missed" ? "text-red-500" : "text-[var(--wa-gray)]"}`}>
+                        {call?.status === "missed" ? "Missed" : isOutgoing ? "Outgoing" : "Incoming"}
                       </span>
                       <span className="text-[var(--wa-gray)]">•</span>
                       <span className="text-[var(--wa-gray)]">
