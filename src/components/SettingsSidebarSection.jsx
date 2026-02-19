@@ -8,6 +8,7 @@ import {
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
 import toast from "react-hot-toast";
+import MultiContactSelectorModal from "./MultiContactSelectorModal";
 
 const SettingsSidebarSection = ({ onBack }) => {
     const { logout, authUser, updateProfile, isCompiling } = useAuthStore();
@@ -48,6 +49,8 @@ const SettingsSidebarSection = ({ onBack }) => {
     // Privacy selection state
     const [privacySelection, setPrivacySelection] = useState(null); // { key: 'lastSeen', title: 'Last seen and online', current: 'everyone' }
     const [tempStatusOption, setTempStatusOption] = useState(authUser?.privacy?.status || "contacts");
+    const [isContactSelectorOpen, setIsContactSelectorOpen] = useState(false);
+    const [contactSelectorType, setContactSelectorType] = useState(null); // 'statusExclude' or 'statusInclude'
 
     const WALLPAPERS = [
         { id: "obsidian", name: "Default Obsidian", url: "https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png" },
@@ -529,34 +532,39 @@ const SettingsSidebarSection = ({ onBack }) => {
                 <div className="space-y-4">
                     <p className="text-[#8696a0] text-sm font-medium uppercase tracking-wider">Who can see my status updates</p>
                     <div className="space-y-6">
+                        {/* ... mapped options ... */}
                         {[
                             { id: "contacts", label: "My contacts" },
                             { id: "except", label: "My contacts except...", count: authUser?.privacy?.statusExclude?.length || 0, color: "text-red-500" },
                             { id: "share", label: "Only share with...", count: authUser?.privacy?.statusInclude?.length || 0, color: "text-[#00a884]" },
                         ].map((option) => (
-                            <label key={option.id} className="flex items-center justify-between cursor-pointer group">
+                            <div key={option.id}
+                                className="flex items-center justify-between cursor-pointer group"
+                                onClick={() => {
+                                    if (option.id === "contacts") {
+                                        updateProfile({ privacy: { ...authUser?.privacy, status: "contacts" } });
+                                        toast.success("Privacy updated");
+                                    } else if (option.id === "except") {
+                                        setContactSelectorType("statusExclude");
+                                        setIsContactSelectorOpen(true);
+                                    } else if (option.id === "share") {
+                                        setContactSelectorType("statusInclude");
+                                        setIsContactSelectorOpen(true);
+                                    }
+                                }}
+                            >
                                 <div className="flex items-center gap-4">
                                     <div className={`size-5 rounded-full border-2 flex items-center justify-center transition-colors ${authUser?.privacy?.status === option.id ? 'border-[#00a884]' : 'border-[#8696a0]'}`}>
                                         {authUser?.privacy?.status === option.id && <div className="size-2.5 bg-[#00a884] rounded-full" />}
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-[#e9edef] text-[17px]">{option.label}</span>
-                                        {option.count !== undefined && (
+                                        {option.count > 0 && (
                                             <span className={`${option.color} text-sm`}>{option.count} {option.id === 'except' ? 'excluded' : 'included'}</span>
                                         )}
                                     </div>
                                 </div>
-                                <input
-                                    type="radio"
-                                    className="hidden"
-                                    name="statusPrivacy"
-                                    checked={authUser?.privacy?.status === option.id}
-                                    onChange={() => {
-                                        updateProfile({ privacy: { ...authUser?.privacy, status: option.id } });
-                                        toast.success("Privacy updated");
-                                    }}
-                                />
-                            </label>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -662,6 +670,24 @@ const SettingsSidebarSection = ({ onBack }) => {
                 {activeSection === "notifications" && renderNotifications()}
                 {activeSection === "sound-selection" && renderSoundSelection()}
                 {activeSection === "status-privacy" && renderStatusPrivacy()}
+
+                <MultiContactSelectorModal
+                    isOpen={isContactSelectorOpen}
+                    onClose={() => setIsContactSelectorOpen(false)}
+                    title={contactSelectorType === "statusExclude" ? "Hide status from..." : "Share status with..."}
+                    initialSelectedIds={contactSelectorType === "statusExclude" ? (authUser?.privacy?.statusExclude || []) : (authUser?.privacy?.statusInclude || [])}
+                    onSelect={(selectedIds) => {
+                        const updates = {
+                            privacy: {
+                                ...authUser?.privacy,
+                                [contactSelectorType]: selectedIds,
+                                status: contactSelectorType === "statusExclude" ? "except" : "share"
+                            }
+                        };
+                        updateProfile(updates);
+                        toast.success("Privacy settings updated");
+                    }}
+                />
             </div>
         </div>
     );
