@@ -13,6 +13,20 @@ const SettingsSidebarSection = ({ onBack }) => {
     const { theme, setTheme, wallpaper, setWallpaper } = useThemeStore();
     const [activeSection, setActiveSection] = useState("main");
 
+    const handleUpdateChatSettings = async (key, value) => {
+        try {
+            await updateProfile({
+                chatSettings: {
+                    ...authUser?.chatSettings,
+                    [key]: value
+                }
+            });
+            toast.success("Settings updated");
+        } catch (error) {
+            toast.error("Failed to update settings");
+        }
+    };
+
     // Local state for editing
     const [isEditingName, setIsEditingName] = useState(false);
     const [fullName, setFullName] = useState(authUser?.fullName || "");
@@ -389,11 +403,14 @@ const SettingsSidebarSection = ({ onBack }) => {
                         {WALLPAPERS.map((w) => (
                             <button
                                 key={w.id}
-                                onClick={() => setWallpaper(w.url)}
-                                className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${wallpaper === w.url ? "border-[var(--wa-teal)]" : "border-transparent hover:border-white/20"}`}
+                                onClick={() => {
+                                    setWallpaper(w.url);
+                                    handleUpdateChatSettings("wallpaper", w.url);
+                                }}
+                                className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${wallpaper === w.url || authUser?.chatSettings?.wallpaper === w.url ? "border-[var(--wa-teal)]" : "border-transparent hover:border-white/20"}`}
                             >
                                 <img src={w.url} alt={w.name} className="w-full h-full object-cover" />
-                                {wallpaper === w.url && (
+                                {(wallpaper === w.url || authUser?.chatSettings?.wallpaper === w.url) && (
                                     <div className="absolute top-1 right-1 bg-[var(--wa-teal)] rounded-full p-0.5">
                                         <div className="size-1.5 bg-white rounded-full" />
                                     </div>
@@ -408,11 +425,21 @@ const SettingsSidebarSection = ({ onBack }) => {
                     <div className="bg-white/5 rounded-xl overflow-hidden ring-1 ring-white/5">
                         <div className="p-4 flex items-center justify-between border-b border-white/5">
                             <p className="text-[#e9edef]">Enter is send</p>
-                            <input type="checkbox" className="toggle toggle-success toggle-sm" defaultChecked />
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success toggle-sm"
+                                checked={authUser?.chatSettings?.enterIsSend !== false}
+                                onChange={(e) => handleUpdateChatSettings("enterIsSend", e.target.checked)}
+                            />
                         </div>
                         <div className="p-4 flex items-center justify-between">
                             <p className="text-[#e9edef]">Media visibility</p>
-                            <input type="checkbox" className="toggle toggle-success toggle-sm" defaultChecked />
+                            <input
+                                type="checkbox"
+                                className="toggle toggle-success toggle-sm"
+                                checked={authUser?.chatSettings?.mediaVisibility !== false}
+                                onChange={(e) => handleUpdateChatSettings("mediaVisibility", e.target.checked)}
+                            />
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,10 @@ const ChatContainer = () => {
     addReaction,
   } = useChatStore();
   const { authUser } = useAuthStore();
-  const { wallpaper } = useThemeStore(); // Get wallpaper from store
+  const { wallpaper: localWallpaper } = useThemeStore();
+  const wallpaper = authUser?.chatSettings?.wallpaper || localWallpaper;
+  const mediaVisibility = authUser?.chatSettings?.mediaVisibility !== false;
+
   const messageEndRef = useRef(null);
 
   useEffect(() => {
@@ -108,26 +111,37 @@ const ChatContainer = () => {
                     {/* Message Content */}
                     <div className="flex flex-col gap-1.5">
                       {message.image && (
-                        <img
-                          src={message.image}
-                          alt="Attachment"
-                          className="max-w-[240px] sm:max-w-[280px] rounded mb-0.5 cursor-pointer"
-                          onClick={() => window.open(message.image, "_blank")}
-                        />
+                        <div className={`relative ${!mediaVisibility ? "filter blur-sm brightness-50" : ""}`}>
+                          <img
+                            src={message.image}
+                            alt="Attachment"
+                            className="max-w-[240px] sm:max-w-[280px] rounded mb-0.5 cursor-pointer"
+                            onClick={() => mediaVisibility && window.open(message.image, "_blank")}
+                          />
+                          {!mediaVisibility && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <ImageIcon className="size-8 text-white/50" />
+                            </div>
+                          )}
+                        </div>
                       )}
                       {message.file && (
-                        <div className="flex items-center gap-2.5 bg-black/10 p-2 rounded border border-white/5 cursor-pointer">
-                          <div className="bg-[#00a884] p-1.5 rounded">
-                            <FileText className="size-4 text-white" />
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-[12px] font-medium truncate max-w-[140px] text-white/90">{message.fileName || "File"}</span>
+                        <div className={`space-y-1 ${!mediaVisibility ? "filter blur-[2px] pointer-events-none" : ""}`}>
+                          <div className="flex items-center gap-2.5 bg-black/10 p-2 rounded border border-white/5 cursor-pointer">
+                            <div className="bg-[#00a884] p-1.5 rounded">
+                              <FileText className="size-4 text-white" />
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[12px] font-medium truncate max-w-[140px] text-white/90">{message.fileName || "File"}</span>
+                            </div>
                           </div>
                         </div>
                       )}
                       {message.audio && (
-                        <div className="bg-black/10 p-1.5 rounded min-w-[180px]">
-                          <audio controls className="h-7 w-full" src={message.audio} />
+                        <div className={`${!mediaVisibility ? "filter blur-[3px] pointer-events-none" : ""}`}>
+                          <div className="bg-black/10 p-1.5 rounded min-w-[180px]">
+                            <audio controls className="h-7 w-full" src={message.audio} />
+                          </div>
                         </div>
                       )}
                       {message.type === "location" && message.location && (

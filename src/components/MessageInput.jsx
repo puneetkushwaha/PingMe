@@ -195,6 +195,22 @@ const MessageInput = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      const enterIsSend = authUser?.chatSettings?.enterIsSend !== false;
+
+      if (e.shiftKey) {
+        // Shift+Enter always adds a new line
+        return;
+      }
+
+      if (enterIsSend) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    }
+  };
+
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     if (!text.trim() && !imagePreview && !filePreview) return;
@@ -398,6 +414,7 @@ const MessageInput = () => {
               className="flex-1 bg-[#1a1a1a] outline-none rounded-lg py-1.5 px-2.5 text-[#e9edef] text-[14px] placeholder-[var(--wa-gray)] min-w-0"
               value={text}
               onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
             />
 
             <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageChange} />
