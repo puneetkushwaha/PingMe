@@ -59,7 +59,7 @@ const PairDeviceModal = ({ isOpen, onClose }) => {
                                     onClick={() => setActiveTab("link")}
                                     className={`flex-1 py-3 text-sm font-medium transition-all border-b-2 flex items-center justify-center gap-2 ${activeTab === "link" ? "border-[#00a884] text-[#00a884]" : "border-transparent text-zinc-500 hover:text-zinc-300"}`}
                                 >
-                                    <SmartphoneIcon className="size-4" /> Link New
+                                    <Smartphone className="size-4" /> Link New
                                 </button>
                                 <button
                                     onClick={() => setActiveTab("devices")}
