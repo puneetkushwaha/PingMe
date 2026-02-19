@@ -49,11 +49,6 @@ const SettingsSidebarSection = ({ onBack }) => {
                     onClick={() => setActiveSection("privacy")}
                 />
                 <OptionItem
-                    icon={<CircleUser className="size-6" />}
-                    title="Avatar"
-                    subtitle="Create, edit, profile photo"
-                />
-                <OptionItem
                     icon={<div className="scale-x-[-1] min-w-6 flex justify-center"><Bell className="size-6" /></div>}
                     title="Chats"
                     subtitle="Theme, wallpapers, chat history"
@@ -64,27 +59,6 @@ const SettingsSidebarSection = ({ onBack }) => {
                     title="Notifications"
                     subtitle="Message, group & call tones"
                     onClick={() => setActiveSection("notifications")}
-                />
-                <OptionItem
-                    icon={<Database className="size-6" />}
-                    title="Storage and data"
-                    subtitle="Network usage, auto-download"
-                />
-                <OptionItem
-                    icon={<Accessibility className="size-6" />}
-                    title="Accessibility"
-                    subtitle="Increase contrast, animation"
-                />
-                <OptionItem
-                    icon={<Languages className="size-6" />}
-                    title="App language"
-                    subtitle="English (device's language)"
-                />
-                <OptionItem
-                    icon={<HelpCircle className="size-6" />}
-                    title="Help"
-                    subtitle="Help centre, contact us, privacy policy"
-                    onClick={() => setActiveSection("help")}
                 />
 
                 <div
@@ -291,16 +265,6 @@ const SettingsSidebarSection = ({ onBack }) => {
                 {activeSection === "privacy" && renderPrivacy()}
                 {activeSection === "chats" && renderChats()}
                 {activeSection === "notifications" && renderNotifications()}
-                {activeSection === "help" && (
-                    <SubSectionLayout title="Help" onBack={() => setActiveSection("main")}>
-                        <div className="p-2 space-y-0.5 animate-in fade-in slide-in-from-right-4 duration-300">
-                            <OptionItem icon={<HelpCircle className="size-6" />} title="Help Centre" subtitle="" />
-                            <OptionItem icon={<CircleUser className="size-6" />} title="Contact us" subtitle="Questions? Need help?" />
-                            <OptionItem icon={<Shield className="size-6" />} title="Terms and Privacy Policy" subtitle="" />
-                            <OptionItem icon={<Info className="size-6" />} title="App info" subtitle="" />
-                        </div>
-                    </SubSectionLayout>
-                )}
             </div>
         </div>
     );
