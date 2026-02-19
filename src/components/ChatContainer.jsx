@@ -226,7 +226,15 @@ const ChatContainer = () => {
                         </div>
                       )}
 
-                      {message.text && (
+                      {message.type === "sticker" && (
+                        <div className="flex justify-center">
+                          <span className="text-8xl leading-none drop-shadow-md hover:scale-110 transition-transform cursor-pointer">
+                            {message.text}
+                          </span>
+                        </div>
+                      )}
+
+                      {message.text && message.type !== "sticker" && (
                         <p className="text-[14px] leading-relaxed whitespace-pre-wrap break-words">
                           {message.text}
                         </p>

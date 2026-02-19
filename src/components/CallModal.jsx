@@ -118,25 +118,26 @@ const CallModal = () => {
                             >
                                 {isMuted ? <MicOff className="size-6" /> : <Mic className="size-6" />}
                             </button>
-                            {call.type === 'video' && (
-                                <button
-                                    onClick={toggleVideo}
-                                    className={`p-4 rounded-full transition-colors backdrop-blur-md ${isVideoOff ? 'bg-white text-black' : 'bg-black/40 text-white hover:bg-black/60'}`}
-                                >
-                                    {isVideoOff ? <VideoOff className="size-6" /> : <Video className="size-6" />}
-                                </button>
+                            {isVideoOff ? <VideoOff className="size-6" /> : <Video className="size-6" />}
+                        </button>
                             )}
-                            <button
-                                onClick={endCall}
-                                className="size-16 bg-red-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg"
-                            >
-                                <PhoneOff className="size-8" />
-                            </button>
-                        </>
+                    <button
+                        onClick={useCallStore.getState().toggleSpeaker}
+                        className={`p-4 rounded-full transition-colors backdrop-blur-md ${useCallStore.getState().isSpeakerOn ? 'bg-white text-black' : 'bg-black/40 text-white hover:bg-black/60'}`}
+                    >
+                        {useCallStore.getState().isSpeakerOn ? <div className="relative"><Phone className="size-6" /><span className="absolute -top-1 -right-1 text-xs font-bold">(( ))</span></div> : <Phone className="size-6" />}
+                    </button>
+                    <button
+                        onClick={endCall}
+                        className="size-16 bg-red-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg"
+                    >
+                        <PhoneOff className="size-8" />
+                    </button>
+                </>
                     )}
-                </div>
             </div>
         </div>
+        </div >
     );
 };
 

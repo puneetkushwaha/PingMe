@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Image as ImageIcon, Send, X, Smile, Plus, Mic, Trash2, File as FileIcon, FileText, MapPin, User as UserIcon, Camera as CameraIcon } from "lucide-react";
+import { Image as ImageIcon, Send, X, Smile, Plus, Mic, Trash2, File as FileIcon, FileText, MapPin, User as UserIcon, Camera as CameraIcon, Sticker } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +15,7 @@ const MessageInput = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showStickerPicker, setShowStickerPicker] = useState(false);
   const [isAttachmentMenuOpen, setIsAttachmentMenuOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -338,10 +339,46 @@ const MessageInput = () => {
         </div>
       ) : (
         <div className="flex items-center gap-0 max-w-full mx-auto">
+          <div className="relative shrink-0">
+            <button
+              type="button"
+              className={`p-1 hover:bg-white/5 rounded-full transition-all shrink-0 ${showStickerPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
+              onClick={() => {
+                setShowStickerPicker(!showStickerPicker);
+                setShowEmojiPicker(false);
+              }}
+            >
+              <Sticker className="size-5.5" />
+            </button>
+            {showStickerPicker && (
+              <div className="absolute bottom-full left-0 mb-3 bg-[#111b21] border border-zinc-700 rounded-lg shadow-xl p-2 w-64 z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="grid grid-cols-4 gap-2 h-48 overflow-y-auto custom-scrollbar">
+                  {/* Placeholder Stickers - Using Big Emojis for now as no asset pack available */}
+                  {['👻', '🐱', '🐶', '🐸', '🐼', '🦊', '🦁', '🐯', '🦄', '🐝', '🐙', '🦋', '💐', '🌸', '🍕', '🍔'].map((sticker, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        // Send as sticker (text but specialized type ideally, here just text or image if we had URLs)
+                        sendMessage({ text: sticker, type: 'sticker' }); // Backend needs to handle 'sticker' type or just treat as text
+                        setShowStickerPicker(false);
+                      }}
+                      className="text-3xl hover:bg-white/10 rounded p-1 transition-colors"
+                    >
+                      {sticker}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           <button
             type="button"
             className={`p-1 hover:bg-white/5 rounded-full transition-all shrink-0 ${showEmojiPicker ? "text-[var(--wa-teal)]" : "text-[var(--wa-gray)]"}`}
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            onClick={() => {
+              setShowEmojiPicker(!showEmojiPicker);
+              setShowStickerPicker(false);
+            }}
           >
             <Smile className="size-5.5" />
           </button>

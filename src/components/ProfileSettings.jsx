@@ -52,11 +52,13 @@ const ProfileSettings = () => {
     return (
         <div className="absolute inset-y-0 left-0 w-full lg:w-[400px] bg-[var(--wa-sidebar-bg)] border-r border-[var(--wa-header-bg)] z-50 flex flex-col animate-in slide-in-from-left duration-200">
             {/* Header */}
-            <div className="h-[108px] bg-[var(--wa-header-bg)] flex items-end px-6 pb-4 gap-4">
-                <button onClick={() => setProfileOpen(false)} className="mb-1 text-[#e9edef] hover:bg-white/5 p-1 rounded-full transition-colors">
-                    <ArrowLeft className="size-6" />
+            <div className="h-[60px] bg-[var(--wa-header-bg)] flex items-center px-4 gap-4 shrink-0">
+                <button onClick={() => setProfileOpen(false)} className="text-[#e9edef] hover:bg-white/5 p-2 rounded-full transition-colors">
+                    <ArrowLeft className="size-5" />
                 </button>
-                <h2 className="text-[#e9edef] text-[19px] font-medium mb-0.5">Profile</h2>
+                <div className="flex-1">
+                    <h2 className="text-[#e9edef] text-[19px] font-medium leading-none">Profile</h2>
+                </div>
             </div>
 
             {/* Content */}

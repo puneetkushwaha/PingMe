@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, ChevronLeft, ChevronRight, Eye, Users } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Eye, Users, Send } from "lucide-react";
+import toast from "react-hot-toast";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -7,8 +8,10 @@ const StatusViewer = ({ statusItem, onClose }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const [showViewers, setShowViewers] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [isSendingReply, setIsSendingReply] = useState(false);
 
-    const { viewStatus } = useChatStore();
+    const { viewStatus, sendMessage } = useChatStore();
     const { authUser } = useAuthStore();
     const currentStatus = statusItem.statuses[currentIndex];
     const isOwner = authUser._id === statusItem.user._id;
@@ -25,7 +28,7 @@ const StatusViewer = ({ statusItem, onClose }) => {
         }
 
         const timer = setInterval(() => {
-            if (showViewers) return; // Pause when viewing viewers
+            if (showViewers || replyText) return; // Pause when viewing viewers OR typing reply
 
             setProgress((prev) => {
                 if (prev >= 100) {
@@ -174,6 +177,62 @@ const StatusViewer = ({ statusItem, onClose }) => {
                     <ChevronRight className="size-8" />
                 </button>
             </div>
+
+            {/* Reply Input for Non-Owners */}
+            {!isOwner && (
+                <div className="absolute bottom-4 inset-x-4 z-[100] flex flex-col gap-2 animate-in slide-in-from-bottom duration-300">
+                    <div className="flex justify-center gap-4 mb-2">
+                        {['❤️', '😂', '😮', '😢', '👏', '🔥'].map((emoji) => (
+                            <button
+                                key={emoji}
+                                onClick={() => {
+                                    sendMessage({
+                                        text: emoji,
+                                        image: null,
+                                        replyToStatusId: currentStatus._id // Assuming backed supports this or just context
+                                    });
+                                    toast.success("Reaction sent");
+                                }}
+                                className="text-2xl hover:scale-125 transition-transform bg-white/10 p-2 rounded-full backdrop-blur-sm"
+                            >
+                                {emoji}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="text"
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && replyText.trim()) {
+                                    sendMessage({
+                                        text: replyText,
+                                        image: null,
+                                        // Context can be added here
+                                    });
+                                    setReplyText("");
+                                    toast.success("Reply sent");
+                                }
+                            }}
+                            placeholder="Type a reply..."
+                            className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-3 px-4 text-white placeholder:text-white/60 outline-none focus:bg-white/20 transition-colors"
+                        />
+                        <button
+                            onClick={() => {
+                                if (replyText.trim()) {
+                                    sendMessage({ text: replyText });
+                                    setReplyText("");
+                                    toast.success("Reply sent");
+                                }
+                            }}
+                            className="p-3 bg-[#00a884] rounded-full text-white hover:bg-[#00b894] transition-colors"
+                        >
+                            <Send className="size-5" />
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
