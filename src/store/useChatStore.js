@@ -255,8 +255,10 @@ export const useChatStore = create((set, get) => ({
         notificationSound: true
       };
 
-      if (!get().notiSound) {
-        set({ notiSound: new Audio("/notification.mp3") });
+      const selectedSoundFile = notificationSettings?.selectedSound || "notification.mp3";
+
+      if (!get().notiSound || get().notiSound.src.split('/').pop() !== selectedSoundFile) {
+        set({ notiSound: new Audio(`/${selectedSoundFile}`) });
       }
       const sound = get().notiSound;
 

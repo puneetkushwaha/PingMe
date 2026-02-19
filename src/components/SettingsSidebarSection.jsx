@@ -14,6 +14,14 @@ const SettingsSidebarSection = ({ onBack }) => {
     const { theme, setTheme, wallpaper, setWallpaper } = useThemeStore();
     const [activeSection, setActiveSection] = useState("main");
 
+    const SOUND_THEMES = [
+        { id: "notification.mp3", name: "Default (PingMe)", file: "/notification.mp3" },
+        { id: "noti.wav", name: "Digital Alert", file: "/noti.wav" },
+        { id: "simple", name: "Simple Pop", file: "/notification.mp3" },
+        { id: "elegant", name: "Elegant Chime", file: "/noti.wav" },
+        { id: "classic", name: "Classic Tone", file: "/notification.mp3" },
+    ];
+
     const handleUpdateChatSettings = async (key, value) => {
         try {
             await updateProfile({
@@ -39,6 +47,7 @@ const SettingsSidebarSection = ({ onBack }) => {
 
     // Privacy selection state
     const [privacySelection, setPrivacySelection] = useState(null); // { key: 'lastSeen', title: 'Last seen and online', current: 'everyone' }
+    const [tempStatusOption, setTempStatusOption] = useState(authUser?.privacy?.status || "contacts");
 
     const WALLPAPERS = [
         { id: "obsidian", name: "Default Obsidian", url: "https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png" },
@@ -329,8 +338,9 @@ const SettingsSidebarSection = ({ onBack }) => {
                             />
                             <PrivacyItem
                                 title="Status"
-                                value="My contacts"
-                                subtitle="Status updates are visible to contacts only"
+                                value={authUser?.privacy?.status === 'contacts' ? 'My contacts' : authUser?.privacy?.status === 'except' ? 'My contacts except...' : 'Only share with...'}
+                                subtitle="Changes to your privacy settings won't affect status updates that you shared already."
+                                onClick={() => setActiveSection("status-privacy")}
                             />
                         </div>
                     </div>
@@ -471,13 +481,16 @@ const SettingsSidebarSection = ({ onBack }) => {
                         <div className="p-4 flex items-center justify-between border-b border-white/5">
                             <div className="flex items-center gap-4">
                                 <Bell className="size-5 text-[var(--wa-gray)]" />
-                                <p className="text-[#e9edef]">Notification tone</p>
+                                <div className="flex-1">
+                                    <p className="text-[#e9edef]">Notification tone</p>
+                                    <p className="text-[#00a884] text-xs">
+                                        {SOUND_THEMES.find(s => s.id === authUser?.notificationSettings?.selectedSound)?.name || "Default (PingMe)"}
+                                    </p>
+                                </div>
                             </div>
-                            <input
-                                type="checkbox"
-                                className="toggle toggle-success toggle-sm"
-                                checked={authUser?.notificationSettings?.notificationSound !== false}
-                                onChange={(e) => handleUpdateNotificationSettings("notificationSound", e.target.checked)}
+                            <ChevronRight
+                                className="size-5 text-[var(--wa-gray)] cursor-pointer"
+                                onClick={() => setActiveSection("sound-selection")}
                             />
                         </div>
                         <div className="p-4 flex items-center justify-between border-b border-white/5">
@@ -510,6 +523,122 @@ const SettingsSidebarSection = ({ onBack }) => {
         </SubSectionLayout>
     );
 
+    const renderStatusPrivacy = () => (
+        <SubSectionLayout title="Status privacy" onBack={() => setActiveSection("privacy")}>
+            <div className="p-6 space-y-8 h-full">
+                <div className="space-y-4">
+                    <p className="text-[#8696a0] text-sm font-medium uppercase tracking-wider">Who can see my status updates</p>
+                    <div className="space-y-6">
+                        {[
+                            { id: "contacts", label: "My contacts" },
+                            { id: "except", label: "My contacts except...", count: authUser?.privacy?.statusExclude?.length || 0, color: "text-red-500" },
+                            { id: "share", label: "Only share with...", count: authUser?.privacy?.statusInclude?.length || 0, color: "text-[#00a884]" },
+                        ].map((option) => (
+                            <label key={option.id} className="flex items-center justify-between cursor-pointer group">
+                                <div className="flex items-center gap-4">
+                                    <div className={`size-5 rounded-full border-2 flex items-center justify-center transition-colors ${authUser?.privacy?.status === option.id ? 'border-[#00a884]' : 'border-[#8696a0]'}`}>
+                                        {authUser?.privacy?.status === option.id && <div className="size-2.5 bg-[#00a884] rounded-full" />}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[#e9edef] text-[17px]">{option.label}</span>
+                                        {option.count !== undefined && (
+                                            <span className={`${option.color} text-sm`}>{option.count} {option.id === 'except' ? 'excluded' : 'included'}</span>
+                                        )}
+                                    </div>
+                                </div>
+                                <input
+                                    type="radio"
+                                    className="hidden"
+                                    name="statusPrivacy"
+                                    checked={authUser?.privacy?.status === option.id}
+                                    onChange={() => {
+                                        updateProfile({ privacy: { ...authUser?.privacy, status: option.id } });
+                                        toast.success("Privacy updated");
+                                    }}
+                                />
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="pt-6 border-t border-white/5">
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-4">
+                            <div className="text-[var(--wa-gray)]"><Volume2 className="size-6 rotate-180" /></div>
+                            <div>
+                                <p className="text-[#e9edef] text-[17px]">Allow sharing</p>
+                                <p className="text-[#8696a0] text-sm">Let people who can see your status reshare and forward it.</p>
+                            </div>
+                        </div>
+                        <input
+                            type="checkbox"
+                            className="toggle toggle-success toggle-sm"
+                            checked={authUser?.privacy?.allowSharing !== false}
+                            onChange={(e) => updateProfile({ privacy: { ...authUser?.privacy, allowSharing: e.target.checked } })}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-4 pt-6">
+                    <div>
+                        <p className="text-[#8696a0] text-sm uppercase font-medium tracking-wider mb-2">Share across apps</p>
+                        <p className="text-[#8696a0] text-sm mb-4">Automatically share your status to your Facebook or Instagram Stories.</p>
+                        <p className="text-[#00a884] font-medium cursor-pointer hover:underline mb-6">Manage in Accounts Centre</p>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between opacity-60">
+                            <div className="flex items-center gap-4">
+                                <div className="size-6 flex items-center justify-center border border-[#8696a0] rounded-full text-[#8696a0] text-xs font-bold">f</div>
+                                <span className="text-[#e9edef]">Facebook Story</span>
+                            </div>
+                            <input type="checkbox" className="toggle toggle-sm" disabled />
+                        </div>
+                        <div className="flex items-center justify-between opacity-60">
+                            <div className="flex items-center gap-4">
+                                <div className="size-6 flex items-center justify-center border border-[#8696a0] rounded-full text-[#8696a0] text-xs font-bold ring-1 ring-inset ring-[#8696a0]">ix</div>
+                                <span className="text-[#e9edef]">Instagram Story</span>
+                            </div>
+                            <input type="checkbox" className="toggle toggle-sm" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-[#8696a0] text-[13px] leading-relaxed italic opacity-70">
+                    Changes to your privacy settings won't affect status updates that you shared already.
+                </p>
+            </div>
+        </SubSectionLayout>
+    );
+
+    const renderSoundSelection = () => (
+        <SubSectionLayout title="Notification tone" onBack={() => setActiveSection("notifications")}>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <div className="p-2">
+                    {SOUND_THEMES.map((sound) => (
+                        <div
+                            key={sound.id}
+                            className="flex items-center justify-between p-4 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-none group"
+                            onClick={() => {
+                                handleUpdateNotificationSettings("selectedSound", sound.id);
+                                const audio = new Audio(sound.file);
+                                audio.play().catch(() => { });
+                            }}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className={`size-5 rounded-full border-2 flex items-center justify-center transition-colors ${authUser?.notificationSettings?.selectedSound === sound.id || (!authUser?.notificationSettings?.selectedSound && sound.id === 'notification.mp3') ? 'border-[#00a884]' : 'border-[#8696a0]'}`}>
+                                    {(authUser?.notificationSettings?.selectedSound === sound.id || (!authUser?.notificationSettings?.selectedSound && sound.id === 'notification.mp3')) && <div className="size-2.5 bg-[#00a884] rounded-full" />}
+                                </div>
+                                <span className="text-[#e9edef] text-[17px]">{sound.name}</span>
+                            </div>
+                            {authUser?.notificationSettings?.selectedSound === sound.id && <Check className="size-5 text-[#00a884]" />}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </SubSectionLayout>
+    );
+
     return (
         <div className="flex-1 flex flex-col h-full bg-[#111b21] overflow-hidden">
             {/* Header */}
@@ -531,6 +660,8 @@ const SettingsSidebarSection = ({ onBack }) => {
                 {activeSection === "privacy" && (privacySelection ? renderPrivacySelection() : renderPrivacy())}
                 {activeSection === "chats" && renderChats()}
                 {activeSection === "notifications" && renderNotifications()}
+                {activeSection === "sound-selection" && renderSoundSelection()}
+                {activeSection === "status-privacy" && renderStatusPrivacy()}
             </div>
         </div>
     );
