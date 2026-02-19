@@ -358,81 +358,87 @@ const MessageInput = () => {
             <AnimatePresence>
               {isAttachmentMenuOpen && (
                 <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-full left-0 mb-3 w-40 bg-[#1a1a1a] rounded-xl shadow-2xl border border-white/5 z-[60] overflow-hidden py-1"
+                >
                   {!isLocationOptionsOpen ? (
-                      <>
-                        <button
-                            onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                        >
-                            <div className="bg-pink-500/20 p-1.5 rounded-lg">
-                            <CameraIcon className="size-3.5 text-pink-500" />
-                            </div>
-                            Camera
-                        </button>
-                        <button
-                            onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                        >
-                            <div className="bg-blue-500/20 p-1.5 rounded-lg">
-                            <ImageIcon className="size-3.5 text-blue-500" />
-                            </div>
-                            Gallery
-                        </button>
-                        <button
-                            onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                        >
-                            <div className="bg-indigo-500/20 p-1.5 rounded-lg">
-                            <FileIcon className="size-3.5 text-indigo-500" />
-                            </div>
-                            Document
-                        </button>
-                        <button
-                            onClick={() => setIsLocationOptionsOpen(true)}
-                            className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                        >
-                            <div className="bg-emerald-500/20 p-1.5 rounded-lg">
-                            <MapPin className="size-3.5 text-emerald-500" />
-                            </div>
-                            Location
-                        </button>
-                        <button
-                            onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                        >
-                            <div className="bg-amber-500/20 p-1.5 rounded-lg">
-                            <UserIcon className="size-3.5 text-amber-500" />
-                            </div>
-                            Contact
-                        </button>
-                      </>
+                    <>
+                      <button
+                        onClick={() => { cameraInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-pink-500/20 p-1.5 rounded-lg">
+                          <CameraIcon className="size-3.5 text-pink-500" />
+                        </div>
+                        Camera
+                      </button>
+                      <button
+                        onClick={() => { fileInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-blue-500/20 p-1.5 rounded-lg">
+                          <ImageIcon className="size-3.5 text-blue-500" />
+                        </div>
+                        Gallery
+                      </button>
+                      <button
+                        onClick={() => { docInputRef.current?.click(); setIsAttachmentMenuOpen(false); }}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-indigo-500/20 p-1.5 rounded-lg">
+                          <FileIcon className="size-3.5 text-indigo-500" />
+                        </div>
+                        Document
+                      </button>
+                      <button
+                        onClick={() => setIsLocationOptionsOpen(true)}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-emerald-500/20 p-1.5 rounded-lg">
+                          <MapPin className="size-3.5 text-emerald-500" />
+                        </div>
+                        Location
+                      </button>
+                      <button
+                        onClick={() => { setIsContactModalOpen(true); setIsAttachmentMenuOpen(false); }}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-amber-500/20 p-1.5 rounded-lg">
+                          <UserIcon className="size-3.5 text-amber-500" />
+                        </div>
+                        Contact
+                      </button>
+                    </>
                   ) : (
-                      <div className="animate-in slide-in-from-right duration-200">
-                          <button
-                              onClick={() => handleShareLocation(false)}
-                              className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                          >
-                              <div className="bg-emerald-500/20 p-1.5 rounded-lg">
-                                  <MapPin className="size-3.5 text-emerald-500" />
-                              </div>
-                              Current Location
-                          </button>
-                          <button
-                              onClick={() => handleShareLocation(true)}
-                              className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
-                          >
-                              <div className="bg-emerald-500/20 p-1.5 rounded-lg animate-pulse">
-                                  <MapPin className="size-3.5 text-emerald-500" />
-                              </div>
-                              Live Location
-                          </button>
-                          <button
-                              onClick={() => setIsLocationOptionsOpen(false)}
-                              className="w-full text-center px-3 py-1.5 text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors border-t border-white/5 mt-1"
-                          >
-                              Back
-                          </button>
-                      </div>
+                    <div className="animate-in slide-in-from-right duration-200">
+                      <button
+                        onClick={() => handleShareLocation(false)}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-emerald-500/20 p-1.5 rounded-lg">
+                          <MapPin className="size-3.5 text-emerald-500" />
+                        </div>
+                        Current Location
+                      </button>
+                      <button
+                        onClick={() => handleShareLocation(true)}
+                        className="w-full text-left px-3 py-2 text-xs text-[#e9edef] hover:bg-white/5 flex items-center gap-3 transition-colors"
+                      >
+                        <div className="bg-emerald-500/20 p-1.5 rounded-lg animate-pulse">
+                          <MapPin className="size-3.5 text-emerald-500" />
+                        </div>
+                        Live Location
+                      </button>
+                      <button
+                        onClick={() => setIsLocationOptionsOpen(false)}
+                        className="w-full text-center px-3 py-1.5 text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors border-t border-white/5 mt-1"
+                      >
+                        Back
+                      </button>
+                    </div>
                   )}
                 </motion.div>
               )}
@@ -487,23 +493,20 @@ const MessageInput = () => {
             </div>
           </form>
         </div>
-  )
-}
+      )}
 
-{
-  showEmojiPicker && (
-    <div className="absolute bottom-full left-0 mb-2 z-50">
-      <EmojiPicker
-        theme="dark"
-        onEmojiClick={(emojiData) => {
-          setText((prev) => prev + emojiData.emoji);
-          setShowEmojiPicker(false);
-        }}
-      />
+      {showEmojiPicker && (
+        <div className="absolute bottom-full left-0 mb-2 z-50">
+          <EmojiPicker
+            theme="dark"
+            onEmojiClick={(emojiData) => {
+              setText((prev) => prev + emojiData.emoji);
+              setShowEmojiPicker(false);
+            }}
+          />
+        </div>
+      )}
     </div>
-  )
-}
-    </div >
   );
 };
 
